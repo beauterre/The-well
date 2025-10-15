@@ -1,9 +1,9 @@
 # The-well
-Mission statement and message to Maria and Dimitr.
+Mission statement and personal message to Maria and Dimitr.
 
-Bulgarian, followed by English
+- Bulgarian, followed by English
 
-Кладенецът — Място за Спиране
+## Кладенецът — Място за Спиране
 
 Преди три години преживях инсулт.
 Мозъкът, в режим на оцеляване, се върна до самото ядро на човешкото — до чистото битие.
@@ -46,8 +46,7 @@ Bulgarian, followed by English
 Тези чудеса ме поддържат сега.
 С парите, които спечелих, и с чудесата, които получавам, искам да помогна на другите да намерят куража да направят същото — по своя начин.
 
-
-Кладенецът — Продължение
+## Кладенецът — Продължение
 
 България е земя с много рани.
 Нейният народ е понесъл много болка.
@@ -68,7 +67,7 @@ Bulgarian, followed by English
 Не за да докаже нещо на света, а за да се излекува.
 И най-сетне да усети, че има достатъчно, за да сподели.
 
-Послание до Мария
+## Послание до Мария
 
 Мария,
 
@@ -87,12 +86,47 @@ Bulgarian, followed by English
 Намерението ми е всичко това да бъде напълно безплатно.
 Мястото трябва да е крайно просто — защото нищо повече не е нужно, за да бъдем по-щастливи, отколкото някога сме били, преди да започнем да се опитваме да станем по-добри още като деца.
 
-
 Можем да запазим договореностите – първо ще остана във „Фламинго“, за да се възстановя. Всеки е повече от добре дошъл да се присъедини, когато медитирам, без да го правя официално. След това ще остана при Генцо и семейството му, които любезно ме поканиха, и ще разгледам мястото, където може да бъде центърът. Планът не се е променил – винаги е бил същият. Просто не можех да го видя, защото се опитвах да управлявам лодката, преди да се удари във водата..
+
+За детето.
+
+Ти и Димитър ще имате дете. Аз съм почти сигурен в това… Видял съм го. Трудно е да се обясни как работи това.
+
+През първите месеци на възстановяването ми получих едно послание, когато бях дълбоко благодарен, че все още съм жив: „Това не е за теб, а за този, който идва след теб.“ Тогава не знаех какво означава. Сега мисля, че твоето дете може да бъде „този, който идва след мен.“
+
+И когато медитирах във „Фламинго“… видях себе си как му чета… на български. Може всичко да е фантазия… а тези неща (аз ги наричам „еха от бъдещето“) имат начин да се сбъдват по много неочаквани начини — може да бъде осиновено, аз може да съм вече далеч, и някой запис да чете на детето, кой знае… ще бъде интересно да се види. Но се надявам това някой ден да се сбъдне.
+
+Така че центърът ще бъде моят подарък за това неродено дете. „Красиво епично“ :) Може би малко самовлюбено, но знам, дълбоко в костите си, че вероятно ще се случи.
+
+Ще ми трябва помощ — аз съм твърде наивен. Но дори аз знам, че начинът да стане това е да не размахвам пари в България и да не храня алчността. Ще ми трябва помощ с администрацията и държавата.
+Вероятно ще помогне и ако не се възприема като нещо, правено от някакъв богат чужденец.
+
+Доверявам се на теб.
+
+## За детето
+
+Ти и Димитър се опитвате да имате дете. Аз съм почти сигурен, че това ще се получи — видял съм дете в бъдещето. Трудно е да се обясни как работи това.
+
+През първите месеци на възстановяването ми получих послание, докато бях дълбоко благодарен, че все още съм жив: „Това не е за теб, а за този, който идва след теб.“ Тогава не знаех какво означава. Бях сигурен, че се отнася за дете — може би моят син. По-късно реших, че вероятно е метафорично дете — всички деца, тези, които още предстоят.
+Сега мисля, че твоето дете може да се окаже „този, който идва след мен.“
+
+Може всичко това да е фантазия… и тези неща (аз ги наричам „еха от бъдещето“ — и обикновено ги държа за себе си, защото дори вече не мога да вярвам, че времето е илюзия, въпреки че веднъж го видях толкова ясно) имат начин да се сбъдват по много неочаквани начини. Детето може да бъде осиновено, може да е внук или някой много по-нататък по линията… кой знае. Ще бъде интересно да видим малката част, която можем да наблюдаваме. Но усещам, че това някак си ще се сбъдне някой ден.
+
+Така че центърът ще бъде моят подарък за твоето неродено дете. Това ми се струва красиво епично :) Ще се радвам да остана там от време на време, но нямам нужда да го притежавам или да живея там.
+
+Центърът, надявам се, ще се самоподдържа, защото хората ще идват там, за да осъзнаят своя излишък и ще бъдат готови да споделят нещо малко с непознати, които идват след тях.
+Но центърът по никакъв начин не трябва да печели пари. Това е отговорност, ако изобщо може да се споделя и да се радва, но не може да се „натрупва“.
+
+Ще ми трябва помощ — твърде наивен съм. Но дори аз знам, че начинът да стане това вероятно не е да размахвам пари в България и да храня алчността.
+Но не знам как… Ще ми трябва помощ с администрацията, с държавата и с една култура, която още не познавам.
+Вероятно ще помогне и ако не се възприема като нещо, правено от богат чужденец.
+
+Доверявам се на теб.
+
 
 ----english----
 
-The Well — A Place to Stop
+## The Well — A Place to Stop
 
 Three years ago, I had a stroke.
 The brain, in survival mode, returned to the very core of what it is to be human — to pure being.
@@ -135,7 +169,7 @@ I stopped bracing — and embraced the small miracles that happen when you align
 These miracles sustain me now.
 With the money I earned, and the miracles I receive, I hope to help others find the courage to do the same — in their own way.
 
-The Well — Continuation
+## The Well — Continuation
 
 Bulgaria is a land with many wounds.
 Its people have endured much pain.
@@ -156,7 +190,7 @@ Even when the mind gives up — especially when the mind gives up.
 Not to prove anything to the world, but to heal.
 And finally to feel that you have enough — enough to share.
 
-Message to Maria
+## Message to Maria
 
 Maria,
 
@@ -176,5 +210,26 @@ I intend for it all to be offered freely.
 It should be extremely simple — because nothing more is needed to be happier than we ever were, before we began trying to become better as children.
 
 We can keep the arrangements – first I will stay at the Flamingo to recuperate. Anyone is more than welcome to join when I meditate, without me making it official. After that, I will stay with Gentso and his family, who kindly invited me, and I will look at the place where the center could be. The plan hasn’t changed – it has always been the same. I just couldn’t see it because I was trying to steer the boat before it hit the water.
+
+## About the child
+
+You and Dimitr are trying to have a child. I am almost certain this will work — I have seen a child in the future. It’s hard to explain how that works.
+
+In the first months of my recovery, I received a message while feeling deeply thankful to still be alive: “This is not about you, but about the one who comes after you.” At the time, I didn’t know what it meant. I was sure it referred to a child — perhaps my son. Later, I decided it must be a metaphorical child — all children, those yet to come.
+Now, I think it might turn out that your child is “the one who comes after me.”
+
+It might all be fantasy… and these things (I call them “echoes from the future” — and I mostly keep them to myself, because even I can no longer believe that time is an illusion, even though I once saw it so clearly) have a way of coming true in very unexpected ways. The child might be adopted, or a grandchild, or someone much further down the line… who knows. It will be interesting to see the small part we get to witness. But I feel this will somehow come true someday.
+
+So the center will be my gift to your unborn child. This feels nicely epic :) I will happily stay there from time to time, but I don’t need to own it or live there.
+
+The center, I hope, will replenish itself, because people will come there to realize their surplus and will be ready to share something small with unknown people who come after them.
+But the center should in no way ever make money. It is a responsibility, if anything, something that can be shared and enjoyed, but cannot be “saved up.”
+
+I will need help — I am too naive. But even I know that the way to make this happen is probably not to wave money around in Bulgaria and feed greed.
+But I don’t know how… I will need help dealing with administration, the government, and a culture I don’t yet know.
+It will probably also help if it isn’t seen as something done by a rich foreigner.
+
+So I trust you.
+
 
 
