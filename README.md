@@ -77,7 +77,7 @@ Mission statement and personal message to Maria and Dimitr.
 
 Искам да дойдеш с мен в Генцo, за да поговорим за създаването на такова място.
 Купих къща във Финландия и оставих част от парите си.
-Ще има между 50 000 и 100 000 евро, за да се изгради малък център за медитация.
+Ще има вероятно между 40 000 и 60 000 евро, за да се изгради малък център за медитация.
 
 Няма да живея там — няма нужда — но възнамерявам да го посещавам.
 А понеже това място е предназначено да приема онези, които имат нужда просто да бъдат някъде, не виждам проблем други хора да живеят там, ако животът ги доведе.
@@ -146,13 +146,13 @@ We have learned to believe that “I am” means “I try.”
 Because surrender feels like danger.
 
 Yet what we truly need is a place — in hard times and in good times — where it is safe to stop trying.
-To simply be. To draw down to our own well.
+To simply be. To draw down from our own well.
 Sometimes that place is a church or a temple.
 Sometimes — a stone in the garden.
 And sometimes — a space between two breaths.
 
 I want to create such a place.
-Where everyone is welcome — whether they pray to God, Allah, Yahweh, Reason, Shiva, Doubt, or Fear.
+Where anyyone is welcome — whether they pray to God, Allah, Yahweh, Reason, Shiva, Doubt, or Fear.
 In Bulgaria, there is an old tradition — the well is both a place to rest and a place to drink.
 
 I want to create a place where one can rest and drink from the well of the soul.
@@ -200,7 +200,7 @@ I believe this is a more truthful and lasting way to share than speaking directl
 
 I want you to come with me to Gentsо, to talk about creating such a place together.
 I have bought a house in Finland and set aside some money.
-There will be between 50,000 and 100,000 euros to build a small meditation center.
+There will probably be between 40,000 and 60,000 euros to build a small meditation center.
 
 I will not live there — there is no need — but I intend to visit.
 And since this place is meant to take in those who are in need of simply being somewhere, I see no problem in others living there if life brings them to it.
