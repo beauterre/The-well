@@ -93,6 +93,12 @@ function playTone() {
   oscillator.connect(audioCtx.destination);
   oscillator.start();
   oscillator.stop(audioCtx.currentTime + 1); // 1s
+  const oscillator2 = audioCtx.createOscillator();
+  oscillator2.frequency.value = midiToFreq(midi)*2;
+  oscillator2.type = 'sine';
+  oscillator2.connect(audioCtx.destination);
+  oscillator2.start();
+  oscillator2.stop(audioCtx.currentTime + 1); // 1s
 }
 
 // MIDI input verandert
