@@ -1,6 +1,4 @@
-# The-well
+# The Well
 
-https://github.com/beauterre/The-well/wiki
-
-https://beauterre.github.io/The-well/
-
+- [GitHub Wiki](https://github.com/beauterre/The-well/wiki)
+- [Project Site](https://beauterre.github.io/The-well/)
