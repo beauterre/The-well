@@ -12,11 +12,12 @@
 <body>
 
 <h2>Geodetische Koepel Resonator - Геодезичен купол резонатор</h2>
-<img src="resonance.html">
+<button onclick="playTone()">Speel toon - Пусни тона</button>
+
+  <img src="resonance.html">
 <label>Straal r (m) - Радиус r (m): <input type="number" id="radiusInput" value="5.88" step="0.01"></label><br>
 <label>MIDI noot (0-127) -MIDI нота (0–127): <input type="number" id="midiInput" value="21" min="0" max="127"></label><br>
 <span id="noteName">Note: A0</span><br>
-<button onclick="playTone()">Speel toon</button>
 
 <canvas id="canvas" width="600" height="200"></canvas>
 
