@@ -107,10 +107,10 @@ function playTone() {
   }
 
   // Basis en harmonischen
-  addOsc(baseFreq, 0.3);          // grondtoon
-  addOsc(baseFreq * 0.5, 0.3);    // sub-octaaf
-  addOsc(baseFreq * 2.0, 0.4);    // octaaf
-  addOsc(baseFreq * 1.5, 0.1);    // kwint
+  addOsc(baseFreq, 0.2);          // grondtoon
+  addOsc(baseFreq * 0.5, 0.1);    // sub-octaaf
+  addOsc(baseFreq * 2.0, 0.3);    // octaaf
+  addOsc(baseFreq * 1.5, 0.01);    // kwint
 
   // Optioneel: lichte amplitude-fade om klik te vermijden
   masterGain.gain.setValueAtTime(0, audioCtx.currentTime);
