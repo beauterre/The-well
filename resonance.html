@@ -108,8 +108,10 @@ function playTone() {
 
   // Basis en harmonischen
   addOsc(baseFreq, 0.7);          // grondtoon
-  addOsc(baseFreq * 0.5, 0.1);    // sub-octaaf
   addOsc(baseFreq * 2.0, 0.5);    // octaaf
+  addOsc(baseFreq * 4.0, 0.4);    // double octaaf
+  addOsc(baseFreq * 8.0, 0.3);    // triple octaaf
+  addOsc(baseFreq * 0.5, 0.1);    // sub-octaaf
   addOsc(baseFreq * 1.5, 0.05);    // kwint
   addOsc(baseFreq * 1.3333, 0.04);    // kwint
 
