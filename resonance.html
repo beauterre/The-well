@@ -83,22 +83,39 @@ function updateCanvas() {
   noteNameSpan.textContent = `Note - Нота: ${midiToName(midi)} (${f.toFixed(2)} Hz)`;
 }
 
-// WebAudio speeltoon
+// WebAudio rijkere speeltoon met octaafresonanties
 function playTone() {
   const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  const oscillator = audioCtx.createOscillator();
   const midi = parseInt(midiInput.value);
-  oscillator.frequency.value = midiToFreq(midi);
-  oscillator.type = 'sine';
-  oscillator.connect(audioCtx.destination);
-  oscillator.start();
-  oscillator.stop(audioCtx.currentTime + 1); // 1s
-  const oscillator2 = audioCtx.createOscillator();
-  oscillator2.frequency.value = midiToFreq(midi)*2;
-  oscillator2.type = 'sine';
-  oscillator2.connect(audioCtx.destination);
-  oscillator2.start();
-  oscillator2.stop(audioCtx.currentTime + 1); // 1s
+  const baseFreq = midiToFreq(midi);
+
+  // Master volume
+  const masterGain = audioCtx.createGain();
+  masterGain.gain.value = 0.2; // algemeen volume
+  masterGain.connect(audioCtx.destination);
+
+  // Functie om snel een oscillator te maken met gain
+  function addOsc(freq, gainValue) {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = freq;
+    gain.gain.value = gainValue;
+    osc.connect(gain).connect(masterGain);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 1.5); // speelduur 1.5 s
+  }
+
+  // Basis en harmonischen
+  addOsc(baseFreq, 0.3);          // grondtoon
+  addOsc(baseFreq * 0.5, 0.3);    // sub-octaaf
+  addOsc(baseFreq * 2.0, 0.4);    // octaaf
+  addOsc(baseFreq * 1.5, 0.1);    // kwint
+
+  // Optioneel: lichte amplitude-fade om klik te vermijden
+  masterGain.gain.setValueAtTime(0, audioCtx.currentTime);
+  masterGain.gain.linearRampToValueAtTime(0.2, audioCtx.currentTime + 0.05);
+  masterGain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 1.5);
 }
 
 // MIDI input verandert
