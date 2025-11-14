@@ -154,11 +154,12 @@ function drawCig(elapsed){
 
   // gradient for rounded feel
   const grad=ctx.createLinearGradient(bodyX,bodyY,bodyX,bodyY+bodyH);
-  grad.addColorStop(0.0,'#999');
+  grad.addColorStop(0.0,'#777');
   grad.addColorStop(0.1,'#eee');
-  grad.addColorStop(0.5,'#fff');
+  grad.addColorStop(0.6,'#fff');
+  grad.addColorStop(0.8,'#fff');
   grad.addColorStop(0.9,'#bbb');
-  grad.addColorStop(1.0,'#888');
+  grad.addColorStop(1.0,'#333');
   ctx.fillStyle=grad;
   ctx.fillRect(bodyX, bodyY, visibleLength, bodyH);
   ctx.fill();
