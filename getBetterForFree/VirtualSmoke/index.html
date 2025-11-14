@@ -165,8 +165,9 @@ function drawCig(elapsed){
 
   // filter line
   const fX=bodyX+bodyL*filterPos;
+  console.log(fX),
   ctx.fillStyle='#000';
-  ctx.fillRect(fX,bodyY,3,bodyH);
+  ctx.fillRect(fX+30,bodyY,3,bodyH);
 
   // glowing tip
   const tipX=bodyX+visibleLength;
