@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Ember Pause — Break Timer</title>
+<link rel="manifest" href="/manifest.json">
+<style>
+  :root{
+    --bg:#0f1113;
+    --muted:#9aa0a6;
+    --accent:#ff7a1a;
+    --glass: rgba(255,255,255,0.04);
+  }
+  html,body{height:100%;margin:0;background:var(--bg);color:#e6eef6;font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;}
+  .wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:18px;padding:18px;box-sizing:border-box;}
+  canvas{border-radius:12px;box-shadow: 0 8px 30px rgba(0,0,0,0.6);background:linear-gradient(180deg,#0b0c0d 0%, #0f1113 100%);display:block;}
+  .controls{display:flex;gap:10px;align-items:center;}
+  button{background:var(--glass);border:1px solid rgba(255,255,255,0.04);color:#e6eef6;padding:10px 14px;border-radius:10px;font-weight:600;cursor:pointer;}
+  button.primary{background:linear-gradient(90deg,var(--accent),#ff9b5a);color:#111;border:none;}
+  .labels{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;}
+  .lang-small{font-size:13px;color:var(--muted);}
+  .timer{font-size:18px;font-weight:700;}
+  .breath-ui{display:flex;gap:18px;align-items:center;}
+  .pulse{width:96px;height:96px;border-radius:999px;display:flex;align-items:center;justify-content:center;position:relative}
+  .pulse-circle{width:80%;height:80%;border-radius:999px;background:rgba(255,255,255,0.02);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
+  .instruction{max-width:360px}
+  .instruction p{margin:6px 0;font-size:15px;color:#e6eef6}
+  .instruction small{display:block;color:var(--muted);margin-top:6px;font-size:13px}
+  .mute{opacity:0.85;font-size:13px}
+  footer{position:fixed;left:12px;bottom:10px;color:var(--muted);font-size:13px}
+  @media (max-width:720px){
+    .breath-ui{flex-direction:column}
+    .pulse{width:80px;height:80px}
+    .instruction{max-width:260px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <canvas id="canvas" width="900" height="220"></canvas>
+
+  <div class="controls">
+    <button id="startBtn" class="primary">Start Break / Стартиране</button>
+    <button id="stopBtn">Stop / Спри</button>
+    <button id="installBtn">Install</button>
+    <label style="display:flex;align-items:center;gap:8px;margin-left:6px">
+      <input id="mute" type="checkbox">
+      <span class="mute">Mute</span>
+    </label>
+    <div style="width:18px"></div>
+    <div class="timer" id="countdown">05:00</div>
+  </div>
+
+  <div class="breath-ui">
+    <div class="pulse" aria-hidden="true">
+      <div class="pulse-circle" id="pulseCircle"></div>
+    </div>
+
+    <div class="instruction">
+      <div class="labels">
+        <p id="instructionText">Press Start — / Натиснете Стартирай —</p>
+        <small id="phaseText" class="lang-small">Ready to guide breath cycles. / Готово за водена дихателна практика.</small>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>Ember Pause — breathe with the burn. • Вдишайте с изгарянето.</footer>
+
+<script>
+/*
+ Ember Pause — index.html
+ - Canvas cigarette + smoke
+ - Breathing guidance with pings and bilingual instructions
+ - Scales breathing durations to fit the cigarette burn duration
+ - PWA: manifest + service worker registration
+*/
+
+// -------------------- Configuration --------------------
+const burnDurationDefault = 300; // seconds (5 min). Change if desired.
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const startBtn = document.getElementById('startBtn');
+const stopBtn = document.getElementById('stopBtn');
+const installBtn = document.getElementById('installBtn');
+const muteCheckbox = document.getElementById('mute');
+const countdownEl = document.getElementById('countdown');
+const instructionText = document.getElementById('instructionText');
+const phaseText = document.getElementById('phaseText');
+const pulseCircle = document.getElementById('pulseCircle');
+
+let wad; // web audio context wrapper
+let audioCtx;
+let masterGain;
+let isMuted = false;
+
+// breathing phases as user specified:
+// phase: {inhaleSec, exhaleSec, repeats}
+// NOTE: these are the *nominal* times. We'll scale them to match burnDuration.
+const breathingPhases = [
+  {inhale:4, exhale:8, repeats:3},
+  {inhale:5, exhale:10, repeats:3},
+  {inhale:6, exhale:12, repeats:3}
+];
+
+// compute nominal total
+function nominalTotalSeconds(phases){
+  let s=0;
+  for(const p of phases){
+    s += (p.inhale + p.exhale) * p.repeats;
+  }
+  return s;
+}
+const nominalTotal = nominalTotalSeconds(breathingPhases); // 135 seconds (2:15)
+
+// -------------------- Responsive canvas --------------------
+function resizeCanvas(){
+  const DPR = window.devicePixelRatio || 1;
+  const targetWidth = Math.min(window.innerWidth - 36, 1000);
+  const targetHeight = 220;
+  canvas.style.width = targetWidth + 'px';
+  canvas.style.height = targetHeight + 'px';
+  canvas.width = Math.round(targetWidth * DPR);
+  canvas.height = Math.round(targetHeight * DPR);
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+// -------------------- Cigarette visual state --------------------
+const cig = {
+  x: 60,
+  y: canvas.height/2/ (window.devicePixelRatio||1) - 10,
+  length: 420,
+  height: 12,
+  tipLength: 12,
+  glowPhase:0,
+  elapsed:0
+};
+
+// particles for smoke
+let particles = [];
+
+// random helper
+const rnd = (a,b)=> Math.random()*(b-a)+a;
+
+// add smoke particle
+function spawnSmoke(){
+  particles.push({
+    x: cig.x + cig.length,
+    y: cig.y + cig.height/2 + rnd(-2,2),
+    vx: rnd(-0.3,0.6),
+    vy: rnd(-0.5,-1.2),
+    life: rnd(120,220),
+    age:0,
+    curl: rnd(0.1,1.2),
+    size: rnd(6,14)
+  });
+}
+
+// update particles
+function updateParticles(dt){
+  for(let i=particles.length-1;i>=0;i--){
+    const p=particles[i];
+    p.age += dt*60;
+    // turbulence: small sinusoidal curl + noise
+    p.x += p.vx + Math.sin(p.age*0.02)*0.2;
+    p.y += p.vy + Math.cos(p.age*0.015)*0.15;
+    p.vx += (Math.random()-0.5)*0.02;
+    if(p.age > p.life) particles.splice(i,1);
+  }
+}
+
+// draw smoke as small curved lines
+function drawSmoke(){
+  ctx.lineCap = 'round';
+  for(const p of particles){
+    const alpha = 1 - (p.age / p.life);
+    ctx.strokeStyle = `rgba(210,210,210,${0.18*alpha})`;
+    ctx.lineWidth = Math.max(1, (p.size/10)*(alpha+0.2));
+    ctx.beginPath();
+    // small curved stroke: use quadratic curve
+    const x0 = p.x;
+    const y0 = p.y;
+    const cx = p.x + Math.sin(p.age*0.02)*12;
+    const cy = p.y - p.size*0.6;
+    const x1 = p.x + Math.sin(p.age*0.03)*24;
+    const y1 = p.y - p.size*1.6;
+    ctx.moveTo(x0,y0);
+    ctx.quadraticCurveTo(cx,cy,x1,y1);
+    ctx.stroke();
+  }
+}
+
+// draw cigarette
+function drawCig(elapsed, burnTotal){
+  // background rectangle (subtle)
+  const pad = 8;
+  const bodyX = cig.x;
+  const bodyY = cig.y;
+  const bodyL = cig.length;
+  const bodyH = cig.height;
+
+  // compute burn ratio (how much burned)
+  const burnRatio = Math.min(1, Math.max(0, elapsed / burnTotal));
+  const visibleLength = bodyL * (1 - burnRatio);
+
+  // body
+  ctx.fillStyle = '#ffffff';
+  roundRect(ctx, bodyX, bodyY, visibleLength, bodyH, 3);
+  ctx.fill();
+
+  // filter band near mouth (tan)
+  ctx.fillStyle = '#f0c9a3';
+  ctx.fillRect(Math.max(bodyX+visibleLength-18, bodyX), bodyY, 18, bodyH);
+
+  // glowing tip (only if visibleLength > 0)
+  const tipX = bodyX + visibleLength;
+  if(visibleLength > 4){
+    const glow = 0.5 + 0.5*Math.sin(cig.glowPhase);
+    const r = 6 + 3*glow;
+    // outer glow
+    const g = ctx.createRadialGradient(tipX + cig.tipLength/2, bodyY+bodyH/2, 1, tipX + cig.tipLength/2, bodyY+bodyH/2, r*2);
+    g.addColorStop(0, `rgba(255,180,70,${0.95*glow})`);
+    g.addColorStop(0.5, `rgba(255,120,35,${0.6*glow})`);
+    g.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.arc(tipX + cig.tipLength/2, bodyY+bodyH/2, r*2, 0, Math.PI*2);
+    ctx.fill();
+
+    // tip block
+    ctx.fillStyle = `rgba(255,${80 + Math.round(120*glow)},0,1)`;
+    ctx.fillRect(tipX, bodyY, cig.tipLength, bodyH);
+  }
+
+  // occasional ash dot (drawn probabilistically)
+  if(Math.random() < 0.01 && visibleLength > 6){
+    const ashX = tipX + rnd(3,10);
+    const ashY = bodyY + rnd(-4, bodyH+4);
+    ctx.fillStyle = 'rgba(220,220,220,0.85)';
+    ctx.beginPath();
+    ctx.arc(ashX, ashY, rnd(1,2.8), 0, Math.PI*2);
+    ctx.fill();
+  }
+
+  cig.glowPhase += 0.06;
+}
+
+// small helper rounded rect
+function roundRect(ctx, x, y, w, h, r){
+  const rad = Math.min(r, h/2, w/2);
+  ctx.beginPath();
+  ctx.moveTo(x+rad,y);
+  ctx.arcTo(x+w,y,x+w,y+h,rad);
+  ctx.arcTo(x+w,y+h,x,y+h,rad);
+  ctx.arcTo(x,y+h,x,y,rad);
+  ctx.arcTo(x,y,x+w,y,rad);
+  ctx.closePath();
+}
+
+// -------------------- Animation loop --------------------
+let lastTs = 0;
+function loop(ts){
+  if(!lastTs) lastTs = ts;
+  const dt = (ts-lastTs)/1000; // seconds
+  lastTs = ts;
+
+  // clear
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  // update smoke
+  if(Math.random() < 0.25) spawnSmoke(); // spawn rate tuned for calm
+  updateParticles(dt);
+  drawSmoke();
+
+  // draw cigarette based on session elapsed (if running)
+  const elapsed = sessionState.isRunning ? (performance.now()/1000 - sessionState.startTime) : sessionState.visualElapsed;
+  drawCig(elapsed, sessionState.burnDuration);
+
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+
+// -------------------- Web Audio (pings) --------------------
+function ensureAudio(){
+  if(audioCtx) return;
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  masterGain = audioCtx.createGain();
+  masterGain.gain.value = 0.9;
+  masterGain.connect(audioCtx.destination);
+}
+
+function playPing(freq=440, duration=0.15, type='sine'){
+  if(isMuted) return;
+  ensureAudio();
+  const o = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+  o.type = type;
+  o.frequency.value = freq;
+  g.gain.value = 0.0001;
+  o.connect(g);
+  g.connect(masterGain);
+  const t = audioCtx.currentTime;
+  g.gain.cancelScheduledValues(t);
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(0.6, t + 0.01);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + duration);
+  o.start(t);
+  o.stop(t + duration + 0.02);
+}
+
+// -------------------- Session State & Breath Scheduler --------------------
+const sessionState = {
+  isRunning:false,
+  startTime:0,
+  burnDuration: burnDurationDefault,
+  visualElapsed:0,
+  // expanded schedule: array of {type: 'inhale'|'exhale', duration}
+  schedule: []
+};
+
+function buildSchedule(burnDurationSeconds){
+  // scale factor to stretch nominal total to burnDuration
+  const scale = burnDurationSeconds / nominalTotal;
+  const schedule = [];
+  for(const ph of breathingPhases){
+    for(let r=0;r<ph.repeats;r++){
+      schedule.push({type:'inhale', duration: ph.inhale * scale});
+      schedule.push({type:'exhale', duration: ph.exhale * scale});
+    }
+  }
+  return schedule;
+}
+
+// human-friendly time format mm:ss
+function fmtTime(s){
+  s = Math.max(0, Math.round(s));
+  const m = Math.floor(s/60);
+  const sec = s%60;
+  return `${m.toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}`;
+}
+
+// run the breathing schedule
+let scheduleTimer = null;
+function startSession(){
+  if(sessionState.isRunning) return;
+  sessionState.burnDuration = burnDurationDefault;
+  sessionState.schedule = buildSchedule(sessionState.burnDuration);
+  sessionState.isRunning = true;
+  sessionState.startTime = performance.now()/1000;
+  sessionState.visualElapsed = 0;
+  lastTs = 0;
+  // resume audio on user gesture if needed
+  if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+
+  // start the scheduler asynchronously via setTimeout chains (not background work)
+  runScheduleFromIndex(0);
+  updateCountdownLoop();
+}
+
+// stop session
+function stopSession(){
+  sessionState.isRunning = false;
+  sessionState.visualElapsed = 0;
+  if(scheduleTimer){ clearTimeout(scheduleTimer); scheduleTimer = null; }
+  countdownEl.textContent = fmtTime(sessionState.burnDuration);
+  instructionText.textContent = 'Stopped / Спряно';
+  phaseText.textContent = 'Press Start to begin a new break. / Натиснете Стартирай за нова пауза.';
+  pulseCircle.style.transform = 'scale(1)';
+}
+
+// run schedule recursively
+function runScheduleFromIndex(idx){
+  if(!sessionState.isRunning) return;
+  if(idx >= sessionState.schedule.length){
+    // all done -> finish
+    finishSession();
+    return;
+  }
+  const item = sessionState.schedule[idx];
+  // instruction text (English / Bulgarian)
+  if(item.type === 'inhale'){
+    instructionText.textContent = 'Breathe in until the next bell — Вдишайте, докато чуете следващия звън';
+    phaseText.textContent = `Inhale ${Math.round(item.duration)}s`;
+    // ping pattern for inhale (lower frequency)
+    playPing(420, 0.14, 'sine');
+    // pulse animation: expand during inhale
+    pulseCircle.animate([{transform:'scale(0.8)'},{transform:'scale(1.15)'}],{duration: item.duration*1000, fill:'forwards', easing:'ease-out'});
+  } else {
+    instructionText.textContent = 'Breathe out slowly, until the next bell — Издишайте бавно, докато чуете следващия звън';
+    phaseText.textContent = `Exhale ${Math.round(item.duration)}s`;
+    playPing(660, 0.18, 'sine');
+    // pulse animation: contract during exhale
+    pulseCircle.animate([{transform:'scale(1.15)'},{transform:'scale(0.85)'}],{duration: item.duration*1000, fill:'forwards', easing:'ease-in'});
+  }
+
+  // schedule next step after item.duration seconds
+  scheduleTimer = setTimeout(()=>{
+    // play the bell at end of segment (shorter)
+    if(item.type === 'inhale') playPing(420, 0.09, 'sine'); else playPing(660, 0.09, 'sine');
+    runScheduleFromIndex(idx+1);
+  }, item.duration*1000);
+}
+
+// finish session
+function finishSession(){
+  sessionState.isRunning = false;
+  // final subtle bell
+  playPing(800, 0.22, 'sine');
+  instructionText.textContent = 'Break complete — Почивката приключи';
+  phaseText.textContent = 'Well done. / Браво.';
+  pulseCircle.style.transform = 'scale(1)';
+  // set visual elapsed to full burn so cigarette fully burnt
+  sessionState.visualElapsed = sessionState.burnDuration;
+  countdownEl.textContent = fmtTime(0);
+}
+
+// countdown/updater that keeps the cigarette burn in sync
+let countdownLoopHandle = null;
+function updateCountdownLoop(){
+  if(countdownLoopHandle) cancelAnimationFrame(countdownLoopHandle);
+  function tick(){
+    if(sessionState.isRunning){
+      const now = performance.now()/1000;
+      const elapsed = now - sessionState.startTime;
+      sessionState.visualElapsed = elapsed;
+      const remaining = Math.max(0, sessionState.burnDuration - elapsed);
+      countdownEl.textContent = fmtTime(remaining);
+      if(elapsed >= sessionState.burnDuration){
+        // done
+        finishSession();
+        return;
+      }
+    }
+    countdownLoopHandle = requestAnimationFrame(tick);
+  }
+  tick();
+}
+
+// -------------------- UI wiring --------------------
+startBtn.addEventListener('click', async ()=>{
+  // resume audio context on gesture
+  if(!audioCtx) ensureAudio();
+  if(audioCtx && audioCtx.state === 'suspended') await audioCtx.resume();
+  isMuted = muteCheckbox.checked;
+  startSession();
+});
+
+stopBtn.addEventListener('click', ()=>{
+  stopSession();
+});
+
+muteCheckbox.addEventListener('change', ()=>{
+  isMuted = muteCheckbox.checked;
+  if(masterGain) masterGain.gain.value = isMuted ? 0 : 0.9;
+});
+
+// PWA install flow (deferred prompt)
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt',(e)=>{
+  e.preventDefault();
+  deferredPrompt = e;
+  installBtn.style.display = 'inline-block';
+});
+installBtn.addEventListener('click', async ()=>{
+  if(deferredPrompt){
+    deferredPrompt.prompt();
+    const choice = await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    installBtn.style.display = 'none';
+  } else {
+    // fallback message
+    alert('Use your browser install option (Chrome: menu → Install). / Използвайте опцията за инсталиране в браузъра.');
+  }
+});
+
+// initialize UI text
+countdownEl.textContent = fmtTime(burnDurationDefault);
+
+// -------------------- Service worker registration --------------------
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/service-worker.js').catch(()=>{/*ignore*/});
+}
+
+// -------------------- Offer a small testing hook --------------------
+// Allow quick test: press "t" to play test inhale/exhale ping (dev convenience)
+window.addEventListener('keydown',(e)=>{
+  if(e.key === 't'){ playPing(420,0.14,'sine'); setTimeout(()=>playPing(660,0.18,'sine'),500); }
+});
+
+// END
+</script>
+</body>
+</html>
