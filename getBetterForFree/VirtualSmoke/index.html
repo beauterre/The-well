@@ -222,6 +222,7 @@ function drawSmoke(){
   }
 }
 
+let visibleLength=0;
 // draw cigarette
 function drawCig(elapsed, burnTotal){
   // background rectangle (subtle)
@@ -233,7 +234,7 @@ function drawCig(elapsed, burnTotal){
 
   // compute burn ratio (how much burned)
   const burnRatio = Math.min(1, Math.max(0, elapsed / burnTotal));
-  const visibleLength = bodyL * (1 - burnRatio);
+  visibleLength = bodyL * (1 - burnRatio);
 
   // body
   ctx.fillStyle = '#ffffff';
