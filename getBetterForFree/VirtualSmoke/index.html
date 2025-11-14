@@ -147,6 +147,8 @@ const rnd = (a,b)=> Math.random()*(b-a)+a;
 
 // add smoke particle
 function spawnSmoke(){
+  // current tip coordinates
+  const visibleLength = cig.length * (1 - burnRatio);
   const burnRatio = Math.min(1, Math.max(0, sessionState.visualElapsed / sessionState.burnDuration));
   const tipX = cig.x + cig.length * (1 - burnRatio);
   particles.push({
@@ -222,7 +224,6 @@ function drawSmoke(){
   }
 }
 
-let visibleLength=0;
 // draw cigarette
 function drawCig(elapsed, burnTotal){
   // background rectangle (subtle)
@@ -234,7 +235,7 @@ function drawCig(elapsed, burnTotal){
 
   // compute burn ratio (how much burned)
   const burnRatio = Math.min(1, Math.max(0, elapsed / burnTotal));
-  visibleLength = bodyL * (1 - burnRatio);
+  const visibleLength = bodyL * (1 - burnRatio);
 
   // body
   ctx.fillStyle = '#ffffff';
