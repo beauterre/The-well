@@ -147,13 +147,17 @@ const rnd = (a,b)=> Math.random()*(b-a)+a;
 
 // add smoke particle
 function spawnSmoke(){
+  const burnRatio = Math.min(1, Math.max(0, sessionState.visualElapsed / sessionState.burnDuration));
+  
   // current tip coordinates
   const visibleLength = cig.length * (1 - burnRatio);
-  const burnRatio = Math.min(1, Math.max(0, sessionState.visualElapsed / sessionState.burnDuration));
-  const tipX = cig.x + cig.length * (1 - burnRatio);
+  const tipX = cig.x + visibleLength;
+  const tipY = cig.y + cig.height/2 + rnd(-2,2);
+
+  // smoke particle
   particles.push({
     x: tipX,
-    y: cig.y + cig.height/2 + rnd(-2,2),
+    y: tipY,
     vx: rnd(-0.3,0.6),
     vy: rnd(-0.5,-1.2),
     life: rnd(120,220),
@@ -161,6 +165,25 @@ function spawnSmoke(){
     curl: rnd(0.1,1.2),
     size: rnd(6,14)
   });
+
+  // ash particle
+  const bodyY = cig.y;
+  const bodyH = cig.height;
+
+  if(Math.random() < 0.02 && visibleLength > 6){
+    const ashX = tipX + rnd(0,4);
+    const ashY = bodyY + rnd(-2, bodyH/2);
+    particles.push({
+      x: ashX,
+      y: ashY,
+      vx: 0,
+      vy: 0.3, // falling down
+      life: 60,
+      age: 0,
+      size: 2,
+      isAsh: true
+    });
+  }
 }
 
 
