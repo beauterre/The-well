@@ -173,10 +173,19 @@ function updateParticles(dt){
   for(let i=particles.length-1;i>=0;i--){
     const p=particles[i];
     p.age += dt*60;
+
+    if (p.isAsh) {
+        // Ash slowly falls
+        p.y += 0.3;          // downward
+        p.x += (Math.random() - 0.5) * 0.3; // slight horizontal drift
+    } else {
     // turbulence: small sinusoidal curl + noise
-    p.x += p.vx + Math.sin(p.age*0.02)*0.2;
-    p.y += p.vy + Math.cos(p.age*0.015)*0.15;
-    p.vx += (Math.random()-0.5)*0.02;
+        p.x += p.vx + Math.sin(p.age*0.02)*0.2;
+        p.y += p.vy + Math.cos(p.age*0.015)*0.15;
+        p.vx += (Math.random()-0.5)*0.02;
+    }
+
+
     if(p.age > p.life) particles.splice(i,1);
   }
 }
@@ -187,20 +196,29 @@ function drawSmoke(){
   for(const p of particles){
     const alpha = 1 - (p.age / p.life);
     if(p.isAsh)
-    {}else
-    ctx.strokeStyle = `rgba(210,210,210,${0.18*alpha})`;
-    ctx.lineWidth = Math.max(1, (p.size/10)*(alpha+0.2));
-    ctx.beginPath();
-    // small curved stroke: use quadratic curve
-    const x0 = p.x;
-    const y0 = p.y;
-    const cx = p.x + Math.sin(p.age*0.02)*12;
-    const cy = p.y - p.size*0.6;
-    const x1 = p.x + Math.sin(p.age*0.03)*24;
-    const y1 = p.y - p.size*1.6;
-    ctx.moveTo(x0,y0);
-    ctx.quadraticCurveTo(cx,cy,x1,y1);
-    ctx.stroke();
+    {
+      // draw small falling ash dot
+      ctx.fillStyle = `rgba(220,220,220,${0.6*alpha})`;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size/2, 0, Math.PI*2);
+      ctx.fill();
+
+    }else
+    {
+        ctx.strokeStyle = `rgba(210,210,210,${0.18*alpha})`;
+        ctx.lineWidth = Math.max(1, (p.size/10)*(alpha+0.2));
+        ctx.beginPath();
+        // small curved stroke: use quadratic curve
+        const x0 = p.x;
+        const y0 = p.y;
+        const cx = p.x + Math.sin(p.age*0.02)*12;
+        const cy = p.y - p.size*0.6;
+        const x1 = p.x + Math.sin(p.age*0.03)*24;
+        const y1 = p.y - p.size*1.6;
+        ctx.moveTo(x0,y0);
+        ctx.quadraticCurveTo(cx,cy,x1,y1);
+        ctx.stroke();
+    }
   }
 }
 
