@@ -160,7 +160,7 @@ function drawCig(elapsed){
   grad.addColorStop(0.9,'#bbb');
   grad.addColorStop(1.0,'#888');
   ctx.fillStyle=grad;
-  fillRect(ctx,bodyX,bodyY,visibleLength,bodyH,bodyH/2);
+  ctx.fillRect(ctx,bodyX,bodyY,visibleLength,bodyH,bodyH/2);
   ctx.fill();
 
   // filter line
