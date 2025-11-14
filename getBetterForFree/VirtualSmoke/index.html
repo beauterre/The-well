@@ -159,6 +159,12 @@ function spawnSmoke(){
     curl: rnd(0.1,1.2),
     size: rnd(6,14)
   });
+  // spawn ash
+  if(Math.random() < 0.02 && visibleLength > 6){
+    const ashX = tipX + rnd(0,4);
+    const ashY = bodyY + rnd(-2, bodyH/2);
+    particles.push({x:ashX, y:ashY, vx:0, vy:0.3, life:60, age:0, size:2, isAsh:true});
+}
 }
 
 
@@ -180,6 +186,8 @@ function drawSmoke(){
   ctx.lineCap = 'round';
   for(const p of particles){
     const alpha = 1 - (p.age / p.life);
+    if(p.isAsh)
+    {}else
     ctx.strokeStyle = `rgba(210,210,210,${0.18*alpha})`;
     ctx.lineWidth = Math.max(1, (p.size/10)*(alpha+0.2));
     ctx.beginPath();
