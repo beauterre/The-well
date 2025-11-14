@@ -161,12 +161,6 @@ function spawnSmoke(){
     curl: rnd(0.1,1.2),
     size: rnd(6,14)
   });
-  // spawn ash
-  if(Math.random() < 0.02 && visibleLength > 6){
-    const ashX = tipX + rnd(0,4);
-    const ashY = bodyY + rnd(-2, bodyH/2);
-    particles.push({x:ashX, y:ashY, vx:0, vy:0.3, life:60, age:0, size:2, isAsh:true});
-}
 }
 
 
@@ -267,7 +261,7 @@ function drawCig(elapsed, burnTotal){
   }
 
   // occasional ash dot (drawn probabilistically)
-  if(Math.random() < 0.01 && visibleLength > 6){
+  if(Math.random() < 0.2 && visibleLength > 6){
     const ashX = tipX + rnd(3,10);
     const ashY = bodyY + rnd(-4, bodyH+4);
     ctx.fillStyle = 'rgba(220,220,220,0.85)';
