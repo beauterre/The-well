@@ -147,8 +147,10 @@ const rnd = (a,b)=> Math.random()*(b-a)+a;
 
 // add smoke particle
 function spawnSmoke(){
+  const burnRatio = Math.min(1, Math.max(0, sessionState.visualElapsed / sessionState.burnDuration));
+  const tipX = cig.x + cig.length * (1 - burnRatio);
   particles.push({
-    x: cig.x + cig.length,
+    x: tipX,
     y: cig.y + cig.height/2 + rnd(-2,2),
     vx: rnd(-0.3,0.6),
     vy: rnd(-0.5,-1.2),
@@ -158,6 +160,7 @@ function spawnSmoke(){
     size: rnd(6,14)
   });
 }
+
 
 // update particles
 function updateParticles(dt){
