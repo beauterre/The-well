@@ -134,7 +134,14 @@ window.addEventListener('resize',resizeCanvas);
 resizeCanvas();
 
 // ------------------- Cigarette -------------------
-const cig = { x:60, y:canvas.height/2/(window.devicePixelRatio||1)-10, length:420, height:17, tipLength:12, glowPhase:0 };
+const cig = { 
+  x:60,
+  y:canvas.height/2/(window.devicePixelRatio||1)-10, 
+  length:420, 
+  height:17, 
+  tipLength:12, 
+  glowPhase:0 
+};
 const filterPos=0.05; // fraction from mouth
 
 function drawCig(elapsed){
@@ -151,12 +158,12 @@ function drawCig(elapsed){
   grad.addColorStop(0.5,'#eee');
   grad.addColorStop(1,'#ddd');
   ctx.fillStyle=grad;
-  roundRect(ctx,bodyX,bodyY,visibleLength,bodyH,bodyH/2);
+  fillRect(ctx,bodyX,bodyY,visibleLength,bodyH,bodyH/2);
   ctx.fill();
 
   // filter line
   const fX=bodyX+bodyL*filterPos;
-  ctx.fillStyle='#f0c9a3';
+  ctx.fillStyle='#000';
   ctx.fillRect(fX,bodyY,3,bodyH);
 
   // glowing tip
