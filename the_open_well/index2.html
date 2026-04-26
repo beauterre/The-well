@@ -6,13 +6,13 @@
   <title>Better — A Community Well of Tools</title>
   <style>
     :root {
-      --bg-color: #fcfbf9; /* Soft cream instead of stark white */
+      --bg-color: #fcfbf9;
       --text-color: #333;
-      --accent-color: #5a7d7c; /* Muted sage green for peace/healing */
+      --accent-color: #5a7d7c;
       --border-color: #e0ddd5;
     }
     body {
-      font-family: "Georgia", serif; /* Serif font feels more human and timeless */
+      font-family: "Georgia", serif;
       background-color: var(--bg-color);
       color: var(--text-color);
       margin: 0;
@@ -64,31 +64,62 @@
       display: grid;
       gap: 1.5rem;
     }
-    .app {
+
+    /* The Clickable Box */
+    .app-link {
+      text-decoration: none; /* Remove underline from the link */
+      color: inherit;        /* Keep text colors as defined */
+      display: block;
+    }
+    .app-card {
       background: #fff;
       border: 1px solid var(--border-color);
       border-radius: 12px;
-      padding: 2rem;
-      transition: transform 0.2s ease;
+      padding: 1.5rem 2rem;
+      display: flex;               /* Use flexbox to put text and icon side-by-side */
+      align-items: center;         /* Center icon vertically */
+      justify-content: space-between; /* Push icon to the far right */
+      transition: all 0.2s ease;
       text-align: left;
     }
-    .app:hover {
+    .app-link:hover .app-card {
       transform: translateY(-3px);
       border-color: var(--accent-color);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     }
-    .app h2 {
-      margin-top: 0;
+    .app-content {
+      padding-right: 20px;
+    }
+    .app-content h2 {
+      margin: 0 0 0.5rem 0;
       font-weight: 500;
       font-size: 1.4rem;
-    }
-    .app h2 a {
       color: var(--accent-color);
-      text-decoration: none;
     }
-    .app p {
-      margin-bottom: 0;
+    .app-content p {
+      margin: 0;
       color: #555;
+      font-size: 1rem;
     }
+
+    /* The Square Icon Container */
+    .app-icon {
+      width: 60px;
+      height: 60px;
+      background-color: #eee; /* Placeholder color */
+      border-radius: 12px;     /* Slightly rounded corners for the square */
+      flex-shrink: 0;          /* Prevent icon from squishing */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .app-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
     footer {
       text-align: center;
       padding: 3rem 1rem;
@@ -134,22 +165,48 @@
 
     <section class="apps">
       <!-- Quit Smoking -->
-      <div class="app">
-        <h2><a href="smoking/index.html">Quit Smoking</a></h2>
-        <p>Not through slogans or science, but through awareness, honesty, and your own timing.</p>
-      </div>
+      <a href="smoking/index.html" class="app-link">
+        <div class="app-card">
+          <div class="app-content">
+            <h2>Quit Smoking</h2>
+            <p>Not through slogans or science, but through awareness, honesty, and your own timing.</p>
+          </div>
+          <div class="app-icon">
+            <!-- Replace src with your icon image path -->
+            <img src="icons/smoke-icon.png" alt="Quit Smoking Icon" onerror="this.style.display='none'">
+            <!-- Fallback text if image is missing -->
+            <span style="color:#ccc; font-size:10px;">ICON</span>
+          </div>
+        </div>
+      </a>
 
       <!-- Meditation App -->
-      <div class="app">
-        <h2><a href="meditation/index.html">Stillness</a></h2>
-        <p>A space to practice the enjoyment of being. Experience over the quality of experience.</p>
-      </div>
+      <a href="meditation/index.html" class="app-link">
+        <div class="app-card">
+          <div class="app-content">
+            <h2>Stillness</h2>
+            <p>A space to practice the enjoyment of being. Experience over the quality of experience.</p>
+          </div>
+          <div class="app-icon">
+            <img src="icons/stillness-icon.png" alt="Stillness Icon" onerror="this.style.display='none'">
+            <span style="color:#ccc; font-size:10px;">ICON</span>
+          </div>
+        </div>
+      </a>
 
       <!-- Insomniac App -->
-      <div class="app">
-        <h2><a href="sleep/index.html">Rest</a></h2>
-        <p>Gently guiding the mind back to the body, allowing the day to dissolve into peace.</p>
-      </div>
+      <a href="sleep/index.html" class="app-link">
+        <div class="app-card">
+          <div class="app-content">
+            <h2>Rest</h2>
+            <p>Gently guiding the mind back to the body, allowing the day to dissolve into peace.</p>
+          </div>
+          <div class="app-icon">
+            <img src="icons/rest-icon.png" alt="Rest Icon" onerror="this.style.display='none'">
+            <span style="color:#ccc; font-size:10px;">ICON</span>
+          </div>
+        </div>
+      </a>
     </section>
   </main>
 
