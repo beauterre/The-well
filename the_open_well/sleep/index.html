@@ -4,27 +4,256 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SOMA: Celestial Aeon</title>
+	<link rel="stylesheet" href="../util/app.css">
     <style>
-        body { margin: 0; overflow: hidden; background: #000; cursor: pointer; }
-        #paintCanvas { display: block; width: 100vw; height: 100vh; opacity: 0; transition: opacity 15s ease; }
-        #glCanvas { display: none; }
-        #overlay { 
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            color: #fff; font-family: 'Georgia', serif; text-align: center;
-            transition: opacity 5s ease;
-            text-shadow: 0 0 20px #000; z-index: 10;
+        /* RESTORED TO COMMUNITY WELL SANCTUARY AESTHETIC */
+        :root {
+            --bg-light: #fcfbf9;     /* Soft cream */
+            --text-main: #444;      /* Soft charcoal */
+            --accent-soft: #5a7d7c;  /* Muted sage green */
+            --border-light: #e0ddd5; /* Warm linen border */
+            --glass-light: rgba(255, 255, 255, 0.7); /* Light airy glass */
         }
-        h1 { font-weight: 100; letter-spacing: 15px; opacity: 0.6; }
-        p { font-size: 0.7rem; letter-spacing: 4px; opacity: 0.3; text-transform: uppercase; }
+
+        body { 
+            margin: 0; 
+            overflow: hidden; 
+            background: #000; /* The art remains black until it fades in */
+            cursor: pointer; 
+            font-family: "Georgia", serif;
+        }
+
+        #paintCanvas { 
+            display: block; 
+            width: 100vw; 
+            height: 100vh; 
+            opacity: 0; 
+            transition: opacity 15s ease; 
+        }
+
+        #glCanvas { display: none; }
+
+        #overlay { 
+            position: absolute; 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%);
+            color: var(--text-main); 
+            text-align: center;
+            transition: opacity 5s ease;
+            z-index: 10;
+        }
+
+        h1 { 
+            font-weight: 100; 
+            letter-spacing: 20px; 
+            opacity: 0.7; 
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            color: var(--text-main);
+        }
+
+        p { 
+            font-size: 0.8rem; 
+            letter-spacing: 6px; 
+            opacity: 0.5; 
+            text-transform: uppercase; 
+            font-style: italic;
+            color: var(--text-main);
+        }
+
+        .pulse {
+            animation: pulse-opacity 4s infinite ease-in-out;
+        }
+
+        @keyframes pulse-opacity {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 0.7; }
+        }
+        
+        /* RESTORED LIGHT GLASS PANEL */
+               .settings {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 400px;
+            background: var(--glass-light); 
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--border-light);
+            border-radius: 25px;
+            z-index: 100;
+            opacity: 1.0; /* Default visibility */
+            transition: opacity 0.8s ease, transform 0.8s ease;
+            cursor: pointer;
+            color: var(--text-main);
+        }
+
+        /* When the ghost-mode class is active, set opacity to 0.1 */
+        .settings.ghost-mode {
+            opacity: 0.1;
+        }
+
+        /* When hovering over a ghost-mode panel, force it to 1.0 */
+        .settings.ghost-mode:hover {
+            opacity: 1.0;
+        }
+
+        #bar {
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            font-size: 0.7rem;
+            letter-spacing: 3px;
+            color: #888;
+            font-weight: bold;
+            border-radius: 25px 25px 0 0;
+            text-transform: uppercase;
+        }
+
+        .controls {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            border-radius: 0 0 25px 25px;
+        }
+
+        .setting-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .setting-group label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--accent-soft);
+            opacity: 0.8;
+        }
+
+        /* Light Mode Dropdowns */
+        select {
+            background: rgba(255, 255, 255, 0.5);
+            color: var(--text-main);
+            border: 1px solid var(--border-light);
+            padding: 8px;
+            border-radius: 10px;
+            font-family: "Georgia", serif;
+        }
+
+        /* Light Mode Sliders */
+        .slider-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            font-size: 0.8rem;
+            color: #777;
+        }
+
+        input[type="range"] {
+            flex: 1;
+            cursor: pointer;
+            accent-color: var(--accent-soft);
+        }
+
+        /* Light Mode Toggles */
+        .system-toggle {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: #777;
+            padding: 5px 0;
+        }
+
+        input[type="checkbox"] {
+            cursor: pointer;
+            accent-color: var(--accent-soft);
+        }
     </style>
+
+	      <script src="../util/NoSleep.min.js.download"></script>
+
 </head>
-<body onclick="startExperience()">
+
+<body>
     <div id="overlay">
-        <h1 id="title">SOMA</h1>
-        <p id="subtitle">Deep slumber for insomniacs</p>
+        <h1 id="title" class="pulse">SOMA</h1>
+        <p id="subtitle">Release into the deep slumber</p>
+		<button id="startButton" class="btn-primary">BEGIN</button>
     </div>
     <canvas id="paintCanvas"></canvas>
     <canvas id="glCanvas"></canvas>
+
+	<!-- Options Overlay -->
+<div class="settings">
+  <div id="bar">OPTIONS</div>
+  <div class="controls" id="controls" style="display: none;">
+    
+    <!-- Visuals Section -->
+    <div class="setting-group">
+      <label>Visual Palette</label>
+      <select id="palette-select">
+		  <option value="celestial">Celestial (Default)</option>
+		  <option value="deep_ocean">Deep Ocean</option>
+		  <option value="golden_hour">Golden Hour</option>
+		  <option value="void">The Void</option>
+		  <option value="amethyst">Deep Amethyst</option>
+		  <option value="midnight">Midnight Bloom</option>
+		  <option value="eclipse">Fire</option>
+		  <option value="arctic">Arctic Ghost</option>
+		  <option value="obsidian">Smoke</option>
+		  <option value="nebula">Nebula Dust</option>
+		  <option value="garden">The Garden</option>
+		</select>
+
+    <!-- Sound Mix Section -->
+    <div class="setting-group">
+      <label>Sound Mix</label>
+      <div class="slider-container">
+        <span>Drone</span>
+        <input type="range" id="gain-drone" min="0" max="1" step="0.01" value="0.2">
+      </div>
+      <div class="slider-container">
+        <span>Somatic</span>
+        <input type="range" id="gain-somatic" min="0" max="1" step="0.01" value="0.6">
+      </div>
+      <div class="slider-container">
+        <span>Atmosphere</span>
+        <input type="range" id="gain-noise" min="0" max="1" step="0.01" value="0.8">
+      </div>
+	  <div class="slider-container">
+		  <span>Atmosphere Tone</span>
+		  <input type="range" id="gain-noise-tone" min="0" max="5000" step="1" value="0">
+		</div>
+    </div>
+
+    <!-- System Section -->
+    <div class="setting-group">
+	<div class="system-toggle">
+		<span>Auto-Evolve Color</span>
+		<input type="checkbox" id="evolve-toggle" checked>
+	</div>
+
+      <div class="system-toggle">
+        <span>NoSleep</span>
+        <input type="checkbox" id="nosleep-toggle" checked>
+      </div>
+      <div class="system-toggle">
+        <span>Full Screen</span>
+        <input type="checkbox" checked id="fullscreen-toggle">
+      </div>
+    </div>
+
+  </div>
+</div>
+
 
     <script id="vs" type="x-shader/x-vertex">
         attribute vec2 position;
@@ -33,11 +262,13 @@
 
     <script id="fs" type="x-shader/x-fragment">
         precision highp float;
+        
         uniform vec2 u_resolution;
         uniform float u_time;
         uniform float u_seed;
         uniform float u_sync; 
         uniform float u_collision; 
+        uniform float u_palette; // 0: Celestial, 1: Ocean, 2: Golden, 3: Void
 
         float hash(float n) { return fract(sin(n * 129.898) * 43758.5453123); }
 
@@ -99,10 +330,44 @@
             float nB = neural_net(neuralInput, u_seed, 19.0);
             
             vec3 neuralColor = vec3(smoothstep(-1.2, 1.2, nR), smoothstep(-1.2, 1.2, nG), smoothstep(-1.2, 1.2, nB));
-            vec3 tintA = vec3(0.3, 0.0, 0.5); 
-            vec3 tintB = vec3(0.0, 0.6, 0.7);
+            
+            // PALETTE LOGIC
+            vec3 tintA, tintB, flashColor;
+            if (u_palette < 0.5) { // 0: Celestial
+                tintA = vec3(0.3, 0.0, 0.5); tintB = vec3(0.0, 0.6, 0.7); flashColor = vec3(1.0, 0.9, 0.7);
+            } else if (u_palette < 1.5) { // 1: Deep Ocean
+                tintA = vec3(0.01, 0.01, 0.05); tintB = vec3(0.0, 0.015, 0.07); flashColor = vec3(0.07, 0.15, 0.22);
+            } else if (u_palette < 2.5) { // 2: Golden Hour
+                tintA = vec3(0.6, 0.2, 0.0); tintB = vec3(1.0, 0.7, 0.2); flashColor = vec3(1.0, 1.0, 0.8);
+            } else if (u_palette < 3.5) { // 3: The Void
+                tintA = vec3(0.0, 0.05, 0.0); tintB = vec3(0.1, 0.0, 0.0); flashColor = vec3(0.05, 0.01, 0.2);
+            } else if (u_palette < 4.5) { // 4: Deep Amethyst
+                tintA = vec3(0.2, 0.0, 0.4); tintB = vec3(0.6, 0.2, 0.8); flashColor = vec3(0.9, 0.7, 1.0);
+            } else if (u_palette < 5.5) { // 5: Midnight Bloom (Surgical Darkness)
+                tintA = vec3(0.005, 0.01, 0.02); tintB = vec3(0.02, 0.05, 0.08); flashColor = vec3(0.05, 0.1, 0.2);
+            } else if (u_palette < 6.5) { // 6: Solar Eclipse (Black Body Radiation)
+                tintA = vec3(0.0, 0.0, 0.0); tintB = vec3(0.4, 0.05, 0.0); flashColor = vec3(1.0, 0.3, 0.0);
+            } else if (u_palette < 7.5) { // 7: Arctic Ghost
+                tintA = vec3(0.4, 0.5, 0.6); tintB = vec3(0.8, 0.9, 1.0); flashColor = vec3(1.0, 1.0, 1.0);
+            } else if (u_palette < 8.5) { // 8: Wood element
+
+			// tintA: Deep roasted coffee/mahogany
+                tintA = vec3(0.15*2.0, 0.11*2.0, 0.09*2.0); 
+                // tintB: Warm cedar/amber (keeping blue near zero to prevent white-out)
+                tintB = vec3(0.15*0.2, 0.10*0.2, 0.08*0.2); 
+                // flashColor: Soft honey/oak glow (maxing at 0.6 to keep it calming)
+                flashColor = vec3(0.22*0.1, 0.20*0.1, 0.18*0.1);
+			} else if (u_palette < 10.5) { // 10: The Garden (Moss & Slate)
+                tintA = vec3(0.2, 0.35, 0.2);   // Deep forest shadow
+                tintB = vec3(0.3*0.2, 0.4*0.2, 0.3*0.2);    // Muted Sage
+                flashColor = vec3(0.3*0.1, 0.2*0.1, 0.1*0.1); // Soft morning dew / moss
+          } else { // 9: Nebula Dust
+                tintA = vec3(0.3, 0.1, 0.4); tintB = vec3(0.8, 0.4, 0.6); flashColor = vec3(0.9, 0.8, 1.0);
+            }
+				
+    		
             vec3 currentTint = mix(tintA, tintB, u_sync);
-            vec3 baseColor = mix(neuralColor * currentTint, vec3(1.0, 0.9, 0.7), u_collision * 0.5);
+            vec3 baseColor = mix(neuralColor * currentTint, flashColor, u_collision * 0.5);
             baseColor += vec3(0.01, 0.01, 0.03);
 
             float alpha = smoothstep(0.5, 1.5, totalInfluence); 
@@ -117,12 +382,29 @@
         }
     </script>
 
+<!--- now do the AUDIO -->
+
     <script>
+	
         let audioCtx;
         let globalSync = 0;
         let collisionIntensity = 0;
+		let currentPaletteIndex = 0; // 0: Celestial, 1: Ocean, 2: Golden, 3: Void
         let experienceStarted = false;
         let noiseFilters = [];
+		
+		let audioGains = {
+    drone: null,
+    somatic: null,
+    noise: null
+};
+
+		let isEvolving = false; // Global state
+
+		const evolveToggle = document.getElementById('evolve-toggle');
+		evolveToggle.addEventListener('change', (e) => {
+			isEvolving = e.target.checked;
+		});
 
         const glCanvas = document.getElementById('glCanvas');
         const paintCanvas = document.getElementById('paintCanvas');
@@ -147,199 +429,261 @@
         const timeLoc = gl.getUniformLocation(program, 'u_time');
         const seedLoc = gl.getUniformLocation(program, 'u_seed');
         const syncLoc = gl.getUniformLocation(program, 'u_sync');
-        const collLoc = gl.getUniformLocation(program, 'u_collision');
+		const collLoc = gl.getUniformLocation(program, 'u_collision');
+		const palLoc = gl.getUniformLocation(program, 'u_palette'); // Add this line
+
 
         const brushSize = 1500; 
         glCanvas.width = brushSize; glCanvas.height = brushSize;
         gl.viewport(0, 0, brushSize, brushSize);
         const randomSeed = Math.random() * 1000;
 
-        function initDeepSlumber() {
-            const binauralBase = 110 / 2;
-            const binauralDiff = 6;
-            const numVoices = 12;
-            
-            const slumberMasterGain = audioCtx.createGain();
-            slumberMasterGain.gain.value = 0;
-            slumberMasterGain.connect(audioCtx.destination);
-            slumberMasterGain.gain.linearRampToValueAtTime(0.2, audioCtx.currentTime + 15);
+      function initDeepSlumber() {
+    const binauralBase = 110 / 2;
+    const binauralDiff = 6;
+    const numVoices = 12;
+    
+    const slumberMasterGain = audioCtx.createGain();
+    audioGains.drone = slumberMasterGain; 
+    
+    // START AT 0 and fade in to the slider value over 10 seconds
+    slumberMasterGain.gain.setValueAtTime(0, audioCtx.currentTime);
+    const targetDroneVol = parseFloat(document.getElementById('gain-drone').value);
+    slumberMasterGain.gain.linearRampToValueAtTime(targetDroneVol, audioCtx.currentTime + 2);
+    
+    slumberMasterGain.connect(audioCtx.destination);
 
-            setInterval(() => {
-                const t = audioCtx.currentTime;
-                const wave1 = Math.sin(t * 0.04); 
-                const wave2 = Math.sin(t * 0.071); 
-                const combined = (wave1 + wave2) / 2;
-                const volume = 0.15 + (combined * 0.1); 
-                slumberMasterGain.gain.setTargetAtTime(Math.max(0.01, volume), t, 1.5);
-            }, 150);
+     setInterval(() => {
+        const t = audioCtx.currentTime;
+        const wave1 = Math.sin(t * 0.04); 
+        const wave2 = Math.sin(t * 0.071); 
+        const combined = (wave1 + wave2) / 2;
+        
+        const baseVol = parseFloat(document.getElementById('gain-drone').value);
+        
+        // CHANGE: Multiply the oscillation by the baseVol 
+        // instead of adding to it.
+        const volume = baseVol * (1 + combined * 0.3); 
+        
+        slumberMasterGain.gain.setTargetAtTime(Math.max(0, volume), t, 1.5);
+    }, 150);
 
-            for(let v = 0; v < numVoices; v++) {
-                const voiceSeed = Math.random() * 1000;
-                const pitchMult = [0.5, 1.0, 1.5, 2.0][v % 4];
-                const pannerL = audioCtx.createStereoPanner(); pannerL.pan.value = -1;
-                const pannerR = audioCtx.createStereoPanner(); pannerR.pan.value = 1;
-                const oscL = audioCtx.createOscillator(); oscL.type = 'sine';
-                oscL.frequency.value = binauralBase * pitchMult;
-                const oscR = audioCtx.createOscillator(); oscR.type = 'sine';
-                oscR.frequency.value = (binauralBase + binauralDiff) * pitchMult;
-                const voiceGain = audioCtx.createGain();
-                voiceGain.gain.value = 0;
 
-                setInterval(() => {
-                    const t = audioCtx.currentTime;
-                    const vMod = (Math.sin(t * 0.1 + v) + Math.sin(t * 0.07 + v * 1.5) + Math.sin(t * 0.03 + v * 2)) / 3;
-                    voiceGain.gain.setTargetAtTime((vMod * 0.1) + 0.1, t, 0.1);
-                }, 100);
+    for(let v = 0; v < numVoices; v++) {
+        const voiceSeed = Math.random() * 1000;
+        const pitchMult = [0.5, 1.0, 1.5, 2.0][v % 4];
+        const pannerL = audioCtx.createStereoPanner(); pannerL.pan.value = -1;
+        const pannerR = audioCtx.createStereoPanner(); pannerR.pan.value = 1;
+        const oscL = audioCtx.createOscillator(); oscL.type = 'sine';
+        oscL.frequency.value = binauralBase * pitchMult;
+        const oscR = audioCtx.createOscillator(); oscR.type = 'sine';
+        oscR.frequency.value = (binauralBase + binauralDiff) * pitchMult;
+        const voiceGain = audioCtx.createGain();
+        voiceGain.gain.value = 0;
 
-                const filter = audioCtx.createBiquadFilter();
-                filter.type = 'bandpass';
-                filter.frequency.value = 800;
-                filter.Q.value = 1;
-                const processor = audioCtx.createScriptProcessor(4096, 1, 1);
-                const hash = (n) => { const x = Math.sin(n) * 129.898; return x - Math.floor(x); };
+        setInterval(() => {
+            const t = audioCtx.currentTime;
+            const vMod = (Math.sin(t * 0.1 + v) + Math.sin(t * 0.07 + v * 1.5) + Math.sin(t * 0.03 + v * 2)) / 3;
+            voiceGain.gain.setTargetAtTime((vMod * 0.1) + 0.1, t, 0.1);
+        }, 100);
 
-                processor.onaudioprocess = (e) => {
-                    const t = audioCtx.currentTime;
-                    let p = Math.sin(t * 0.05 + v);
-                    let acc = 0; let amplitude = 1.0; let currentP = p;
-                    for (let layer = 0; layer < 4; layer++) {
-                        const mod = Math.sin(t * 0.1 + layer) * 0.5;
-                        const w1 = hash(voiceSeed + layer * 101) + mod;
-                        currentP = Math.abs(currentP) - 0.5;
-                        acc += amplitude * Math.sin(currentP * w1 * 3.0);
-                        currentP *= 1.6; amplitude *= 0.6;
-                    }
-                    filter.Q.setTargetAtTime(1 + (acc * 20), t, 0.1);
-                    filter.frequency.setTargetAtTime(800 + (acc * 400), t, 0.1);
-                };
+        const filter = audioCtx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.value = 800;
+        filter.Q.value = 1;
+        const processor = audioCtx.createScriptProcessor(4096, 1, 1);
+        const hash = (n) => { const x = Math.sin(n) * 129.898; return x - Math.floor(x); };
 
-                oscL.connect(pannerL); pannerL.connect(filter);
-                oscR.connect(pannerR); pannerR.connect(filter);
-                filter.connect(voiceGain);
-                voiceGain.connect(slumberMasterGain);
-                oscL.start(); oscR.start();
-                const silentGain = audioCtx.createGain(); silentGain.gain.value = 0;
-                processor.connect(silentGain); silentGain.connect(audioCtx.destination);
+        processor.onaudioprocess = (e) => {
+            const t = audioCtx.currentTime;
+            let p = Math.sin(t * 0.05 + v);
+            let acc = 0; let amplitude = 1.0; let currentP = p;
+            for (let layer = 0; layer < 4; layer++) {
+                const mod = Math.sin(t * 0.1 + layer) * 0.5;
+                const w1 = hash(voiceSeed + layer * 101) + mod;
+                currentP = Math.abs(currentP) - 0.5;
+                acc += amplitude * Math.sin(currentP * w1 * 3.0);
+                currentP *= 1.6; amplitude *= 0.6;
             }
+            filter.Q.setTargetAtTime(1 + (acc * 20), t, 0.1);
+            filter.frequency.setTargetAtTime(800 + (acc * 400), t, 0.1);
+        };
+
+        oscL.connect(pannerL); pannerL.connect(filter);
+        oscR.connect(pannerR); pannerR.connect(filter);
+        filter.connect(voiceGain);
+        voiceGain.connect(slumberMasterGain);
+        oscL.start(); oscR.start();
+        const silentGain = audioCtx.createGain(); silentGain.gain.value = 0;
+        processor.connect(silentGain); silentGain.connect(audioCtx.destination);
+    }
+}
+
+
+      async function initAudio() {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    initDeepSlumber();
+
+    const masterThroatGain = audioCtx.createGain();
+    audioGains.somatic = masterThroatGain; 
+    
+    // START AT 0 and fade in over 15 seconds (slower for more atmosphere)
+    masterThroatGain.gain.setValueAtTime(0, audioCtx.currentTime);
+    const targetSomaticVol = parseFloat(document.getElementById('gain-somatic').value);
+    masterThroatGain.gain.linearRampToValueAtTime(targetSomaticVol, audioCtx.currentTime + 2);
+    
+    masterThroatGain.connect(audioCtx.destination);
+
+
+    setInterval(() => {
+        const t = audioCtx.currentTime;
+        const wave = (Math.sin(t * 0.07) + Math.sin(t * 0.03) + Math.sin(t * 0.01)) / 3;
+        const volume = 0.15 + (wave * 0.05 + 0.05); 
+        // We multiply the internal oscillation by the slider value
+        const sliderVal = parseFloat(document.getElementById('gain-somatic').value);
+        masterThroatGain.gain.setTargetAtTime(volume * sliderVal, t, 0.5);
+    }, 100);
+
+    const throatVoices = 6;
+    for(let v = 0; v < throatVoices; v++) {
+        const voiceSeed = Math.random() * 1000;
+        const baseFreq = 110 * (1 + (Math.random() * 0.02));
+        const processor = audioCtx.createScriptProcessor(4096, 1, 1);
+        let sampleIdx = 0;
+        const hash = (n) => { const x = Math.sin(n) * 129.898; return x - Math.floor(x); };
+        processor.onaudioprocess = (e) => {
+            const output = e.outputBuffer.getChannelData(0);
+            const t = audioCtx.currentTime;
+            for (let i = 0; i < 4096; i++) {
+                let p = Math.sin(2 * Math.PI * baseFreq * t + (sampleIdx * 0.0001));
+                let acc = 0; let amplitude = 1.0; let currentP = p; let prevVal = 0;
+                for (let layer = 0; layer < 4; layer++) {
+                    const mod = Math.sin(t * 0.1 + layer + v) * 0.4;
+                    const w1 = hash(voiceSeed + layer * 101) + mod;
+                    currentP = Math.abs(currentP) - 0.5;
+                    let val = currentP * w1 + prevVal * 0.3;
+                    let layerOut = Math.sin(val * 2.0) * Math.cos(val * 0.8);
+                    acc += amplitude * layerOut; prevVal = layerOut; currentP *= 1.8; amplitude *= 0.6;
+                }
+                output[i] = Math.tanh(acc * 0.4); sampleIdx++;
+            }
+        };
+        const f1 = audioCtx.createBiquadFilter(); f1.type = 'bandpass'; f1.Q.value = 10;
+        const f2 = audioCtx.createBiquadFilter(); f2.type = 'bandpass'; f2.Q.value = 10;
+        const f3 = audioCtx.createBiquadFilter(); f3.type = 'bandpass'; f3.Q.value = 10;
+        const modulateT = () => {
+            const morph = Math.sin(audioCtx.currentTime * 0.2 + v) * 0.5 + 0.5;
+            f1.frequency.setValueAtTime(400 + (morph * 300), audioCtx.currentTime);
+            f2.frequency.setValueAtTime(800 + (morph * 400), audioCtx.currentTime);
+            f3.frequency.setValueAtTime(1200 + (morph * 1300), audioCtx.currentTime);
+        };
+        setInterval(modulateT, 50);
+        const voiceGain = audioCtx.createGain(); voiceGain.gain.value = 0.15;
+        processor.connect(f1); processor.connect(f2); processor.connect(f3);
+        f1.connect(voiceGain); f2.connect(voiceGain); f3.connect(voiceGain);
+        voiceGain.connect(masterThroatGain);
+    }
+
+    const masterNoiseGain = audioCtx.createGain();
+    audioGains.noise = masterNoiseGain; 
+    
+    // START AT 0 and fade in over 12 seconds
+    masterNoiseGain.gain.setValueAtTime(0, audioCtx.currentTime);
+    const targetNoiseVol = parseFloat(document.getElementById('gain-noise').value);
+    masterNoiseGain.gain.linearRampToValueAtTime(targetNoiseVol, audioCtx.currentTime + 2);
+    
+    masterNoiseGain.connect(audioCtx.destination);
+
+
+    const channels = ['L', 'R'];
+    channels.forEach(ch => {
+	
+			// Inside initAudio(), inside channels.forEach...
+		const filter = audioCtx.createBiquadFilter();
+		filter.type = 'lowpass'; 
+
+		// CHANGE: Set the initial frequency from the new slider
+		filter.frequency.value = parseFloat(document.getElementById('gain-noise-tone').value);
+
+		noiseFilters.push(filter); 
+
+	
+        const seed = Math.random() * 1000;
+        const processor = audioCtx.createScriptProcessor(4096, 1, 1);
+        const hash = (n) => { const x = Math.sin(n) * 129.898; return x - Math.floor(x); };
+        processor.onaudioprocess = (e) => {
+            const output = e.outputBuffer.getChannelData(0);
+            const t = audioCtx.currentTime;
+            for (let i = 0; i < 4096; i++) {
+                let p = (Math.random() * 2 - 1);
+                let acc = 0; let amplitude = 1.0; let currentP = p; let prevVal = 0;
+                for (let layer = 0; layer < 5; layer++) {
+                    const mod = Math.sin(t * 0.1 + layer) * 0.4;
+                    const w1 = hash(seed + layer * 101) + mod;
+                    currentP = Math.abs(currentP) - 0.5;
+                    let val = currentP * w1 + prevVal * 0.2;
+                    acc += amplitude * Math.sin(val * 2.0);
+                    prevVal = Math.sin(val * 2.0);
+                    currentP *= 1.2; amplitude *= 0.6;
+                }
+                output[i] = acc * 0.1;
+            }
+        };
+        const BQfilter = audioCtx.createBiquadFilter();
+        BQfilter.type = 'lowpass'; filter.frequency.value = 400;
+        noiseFilters.push(BQfilter); 
+        const panner = audioCtx.createStereoPanner();
+        panner.pan.value = (ch === 'L') ? -1 : 1;
+        const gain = audioCtx.createGain(); 
+        gain.gain.value = 0.12; 
+        processor.connect(filter); 
+        filter.connect(panner); 
+        panner.connect(gain); 
+        gain.connect(masterNoiseGain); 
+    });
+
+      const binauralBase = 27.5; const binauralDiff = 6; 
+    for(let v=0; v<6; v++) {
+        const pL = audioCtx.createStereoPanner(); pL.pan.value = -1;
+        const pR = audioCtx.createStereoPanner(); pR.pan.value = 1;
+        const oL = audioCtx.createOscillator(); oL.type = 'sine'; oL.frequency.value = binauralBase * (v % 3 + 1);
+        const oR = audioCtx.createOscillator(); oR.type = 'sine'; oR.frequency.value = (binauralBase + binauralDiff) * (v % 3 + 1);
+        const vGain = audioCtx.createGain(); vGain.gain.value = 0.04;
+        
+        oL.connect(pL); pL.connect(vGain); 
+        oR.connect(pR); pR.connect(vGain); 
+        
+        // CHANGE: Connect to our Drone Master instead of the destination
+        if (audioGains.drone) {
+            vGain.connect(audioGains.drone);
+        } else {
+            vGain.connect(audioCtx.destination);
         }
+        
+        oL.start(); oR.start();
+    }
 
-        async function initAudio() {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            initDeepSlumber();
+      setInterval(() => {
+        const t = audioCtx.currentTime;
+        globalSync = (Math.sin(t * 0.05) + Math.sin(t * 0.03) + Math.sin(t * 0.01)) / 3;
+        globalSync = (globalSync * 0.5) + 0.5;
+        
+        // Get the current "Brownness" set by the user
+        const baseTone = parseFloat(document.getElementById('gain-noise-tone').value);
+        
+        noiseFilters.forEach(f => {
+            // The frequency is now the User Tone + an offset based on collisions
+            const targetFreq = baseTone + (collisionIntensity * 2000);
+            f.frequency.setTargetAtTime(targetFreq, t, 0.1);
+        });
+    }, 50);
 
-            // RESTORED THROAT-CLICK Synthesis
-            const masterThroatGain = audioCtx.createGain();
-            masterThroatGain.gain.value = 0;
-            masterThroatGain.connect(audioCtx.destination);
-            setTimeout(() => {
-                masterThroatGain.gain.linearRampToValueAtTime(0.3, audioCtx.currentTime + 12);
-            }, 15000);
+}
 
-            setInterval(() => {
-                const t = audioCtx.currentTime;
-                const wave = (Math.sin(t * 0.07) + Math.sin(t * 0.03) + Math.sin(t * 0.01)) / 3;
-                const volume = 0.15 + (wave * 0.05 + 0.05); 
-                masterThroatGain.gain.setTargetAtTime(volume, t, 0.5);
-            }, 100);
-
-            const throatVoices = 6;
-            for(let v = 0; v < throatVoices; v++) {
-                const voiceSeed = Math.random() * 1000;
-                const baseFreq = 110 * (1 + (Math.random() * 0.02));
-                const processor = audioCtx.createScriptProcessor(4096, 1, 1);
-                let sampleIdx = 0;
-                const hash = (n) => { const x = Math.sin(n) * 129.898; return x - Math.floor(x); };
-                processor.onaudioprocess = (e) => {
-                    const output = e.outputBuffer.getChannelData(0);
-                    const t = audioCtx.currentTime;
-                    for (let i = 0; i < 4096; i++) {
-                        let p = Math.sin(2 * Math.PI * baseFreq * t + (sampleIdx * 0.0001));
-                        let acc = 0; let amplitude = 1.0; let currentP = p; let prevVal = 0;
-                        for (let layer = 0; layer < 4; layer++) {
-                            const mod = Math.sin(t * 0.1 + layer + v) * 0.4;
-                            const w1 = hash(voiceSeed + layer * 101) + mod;
-                            currentP = Math.abs(currentP) - 0.5;
-                            let val = currentP * w1 + prevVal * 0.3;
-                            let layerOut = Math.sin(val * 2.0) * Math.cos(val * 0.8);
-                            acc += amplitude * layerOut; prevVal = layerOut; currentP *= 1.8; amplitude *= 0.6;
-                        }
-                        output[i] = Math.tanh(acc * 0.4); sampleIdx++;
-                    }
-                };
-                const f1 = audioCtx.createBiquadFilter(); f1.type = 'bandpass'; f1.Q.value = 10;
-                const f2 = audioCtx.createBiquadFilter(); f2.type = 'bandpass'; f2.Q.value = 10;
-                const f3 = audioCtx.createBiquadFilter(); f3.type = 'bandpass'; f3.Q.value = 10;
-                const modulateT = () => {
-                    const morph = Math.sin(audioCtx.currentTime * 0.2 + v) * 0.5 + 0.5;
-                    f1.frequency.setValueAtTime(400 + (morph * 300), audioCtx.currentTime);
-                    f2.frequency.setValueAtTime(800 + (morph * 400), audioCtx.currentTime);
-                    f3.frequency.setValueAtTime(1200 + (morph * 1300), audioCtx.currentTime);
-                };
-                setInterval(modulateT, 50);
-                const voiceGain = audioCtx.createGain(); voiceGain.gain.value = 0.15;
-                processor.connect(f1); processor.connect(f2); processor.connect(f3);
-                f1.connect(voiceGain); f2.connect(voiceGain); f3.connect(voiceGain);
-                voiceGain.connect(masterThroatGain);
-            }
-
-            // BALANCED NOISE (Reduced gain to be atmospheric, not overbearing)
-            const channels = ['L', 'R'];
-            channels.forEach(ch => {
-                const seed = Math.random() * 1000;
-                const processor = audioCtx.createScriptProcessor(4096, 1, 1);
-                const hash = (n) => { const x = Math.sin(n) * 129.898; return x - Math.floor(x); };
-                processor.onaudioprocess = (e) => {
-                    const output = e.outputBuffer.getChannelData(0);
-                    const t = audioCtx.currentTime;
-                    for (let i = 0; i < 4096; i++) {
-                        let p = (Math.random() * 2 - 1);
-                        let acc = 0; let amplitude = 1.0; let currentP = p; let prevVal = 0;
-                        for (let layer = 0; layer < 5; layer++) {
-                            const mod = Math.sin(t * 0.1 + layer) * 0.4;
-                            const w1 = hash(seed + layer * 101) + mod;
-                            currentP = Math.abs(currentP) - 0.5;
-                            let val = currentP * w1 + prevVal * 0.2;
-                            acc += amplitude * Math.sin(val * 2.0);
-                            prevVal = Math.sin(val * 2.0);
-                            currentP *= 1.2; amplitude *= 0.6;
-                        }
-                        output[i] = acc * 0.1;
-                    }
-                };
-                const filter = audioCtx.createBiquadFilter();
-                filter.type = 'lowpass'; filter.frequency.value = 400;
-                noiseFilters.push(filter); 
-                const panner = audioCtx.createStereoPanner();
-                panner.pan.value = (ch === 'L') ? -1 : 1;
-                const gain = audioCtx.createGain(); 
-                gain.gain.value = 0.12; // Lowered from 0.3
-                processor.connect(filter); filter.connect(panner); panner.connect(gain); gain.connect(audioCtx.destination);
-            });
-
-            const binauralBase = 27.5; const binauralDiff = 6; 
-            for(let v=0; v<6; v++) {
-                const pL = audioCtx.createStereoPanner(); pL.pan.value = -1;
-                const pR = audioCtx.createStereoPanner(); pR.pan.value = 1;
-                const oL = audioCtx.createOscillator(); oL.type = 'sine'; oL.frequency.value = binauralBase * (v % 3 + 1);
-                const oR = audioCtx.createOscillator(); oR.type = 'sine'; oR.frequency.value = (binauralBase + binauralDiff) * (v % 3 + 1);
-                const vGain = audioCtx.createGain(); vGain.gain.value = 0.04;
-                oL.connect(pL); pL.connect(vGain); oR.connect(pR); pR.connect(vGain); vGain.connect(audioCtx.destination);
-                oL.start(); oR.start();
-            }
-
-            setInterval(() => {
-                const t = audioCtx.currentTime;
-                globalSync = (Math.sin(t * 0.05) + Math.sin(t * 0.03) + Math.sin(t * 0.01)) / 3;
-                globalSync = (globalSync * 0.5) + 0.5;
-                noiseFilters.forEach(f => {
-                    const targetFreq = 300 + (collisionIntensity * 2500);
-                    f.frequency.setTargetAtTime(targetFreq, t, 0.1);
-                });
-            }, 50);
-        }
 
         function render(time) {
             time *= 0.001;
+
             const particles = [];
             const slowShift = Math.sin(time * 0.2) * 0.5 + 0.5;
             for(let i=0; i<7; i++) {
@@ -362,9 +706,28 @@
             gl.uniform1f(timeLoc, time);
             gl.uniform1f(seedLoc, randomSeed);
             gl.uniform1f(syncLoc, globalSync); 
-            gl.uniform1f(collLoc, collisionIntensity);
+			gl.uniform1f(collLoc, collisionIntensity);
+			gl.uniform1f(palLoc, currentPaletteIndex); // Add this line before gl.clearColor
             gl.clearColor(0,0,0,0); gl.clear(gl.COLOR_BUFFER_BIT);
             gl.drawArrays(gl.TRIANGLES, 0, 6);
+			
+			
+			
+    if (isEvolving) {
+        // Increment by 1 every few seconds. 
+        // 0.001 is very slow. 0.005 is a moderate pace.
+        currentPaletteIndex += 0.0002; 
+        
+        // Loop back to 0 after the last preset (e.g., 11 presets)
+        if (currentPaletteIndex >= 11) {
+            currentPaletteIndex = 0;
+        }
+    }
+
+    // Pass the current index to the shader
+    gl.uniform1f(palLoc, currentPaletteIndex);
+		
+			
             if (paintCanvas.width !== window.innerWidth || paintCanvas.height !== window.innerHeight) {
                 paintCanvas.width = window.innerWidth; paintCanvas.height = window.innerHeight;
             }
@@ -376,25 +739,157 @@
             ctx.drawImage(glCanvas, cX - brushSize/2, cY - brushSize/2);
             requestAnimationFrame(render);
         }
+		// Fullscreen Toggle Logic
+const fullscreenToggle = document.getElementById('fullscreen-toggle');
 
         async function startExperience() {
+		console.log("starting experience");
             if (experienceStarted) return;
             experienceStarted = true;
+	
+			// Fade the options panel to ghost mode once the journey begins
+			 document.querySelector('.settings').classList.add('ghost-mode');    
             
             // GO FULLSCREEN
-            if (document.documentElement.requestFullscreen) {
-                document.documentElement.requestFullscreen().catch(e => console.log(e));
-            }
+			if(fullscreenToggle.checked)
+			{
+				if (document.documentElement.requestFullscreen) {
+					document.documentElement.requestFullscreen().catch(e => console.log(e));
+				}
+				// fullscreenonchange will update the toggle.
+			}
 
             await initAudio();
             setTimeout(() => {
                 document.getElementById('overlay').style.opacity = '0';
                 document.getElementById('paintCanvas').style.opacity = '1';
-            }, 4000);
+            }, 2000);
         }
 
-        window.addEventListener('click', startExperience);
+const startButton = document.getElementById('startButton');
+console.log(startButton)
+startButton.addEventListener("click",startExperience);
+
+
+//        window.addEventListener('click', startExperience);
         requestAnimationFrame(render);
+		
+
     </script>
+	
+<script>
+// Options Menu Toggle Logic
+const bar = document.getElementById("bar");
+const controls = document.getElementById("controls");
+
+
+window.addEventListener('click', function(event) {
+    const settingsPanel = document.querySelector('.settings');
+    const controls = document.getElementById('controls');
+    const bar = document.getElementById('bar');
+
+    // Check if the click happened OUTSIDE the settings panel
+    if (!settingsPanel.contains(event.target)) {
+        // Close the controls
+        controls.style.display = "none";
+        // Reset the bar radius back to the closed state
+        bar.style.borderRadius = "25px";
+    }
+});
+
+bar.onclick = function() {
+  if(controls.style.display === "none") {
+    controls.style.display = "flex"; // use flex to maintain the layout
+    bar.style.borderRadius = "25px 25px 0 0";
+  } else {
+    controls.style.display = "none";
+    bar.style.borderRadius = "25px";
+  }
+}
+
+
+// 1. Stop the bar from bubbling
+bar.addEventListener('click', (e) => e.stopPropagation());
+
+// 2. Close on outside click
+window.addEventListener('click', (e) => {
+    const settings = document.querySelector('.settings');
+    if (!settings.contains(e.target)) {
+        controls.style.display = "none";
+        bar.style.borderRadius = "25px";
+    }
+});
+
+// Palette Selection Logic
+const paletteSelect = document.getElementById('palette-select');
+const paletteMap = {
+    'celestial': 0,
+    'deep_ocean': 1,
+    'golden_hour': 2,
+    'void': 3,
+    'amethyst': 4,
+    'midnight': 5,
+    'eclipse': 6,
+    'arctic': 7,
+    'obsidian': 8,
+    'nebula': 9,
+    'garden': 10
+};
+
+
+paletteSelect.addEventListener('change', (e) => {
+    const val = e.target.value;
+    currentPaletteIndex = paletteMap[val];
+	
+	    controls.style.display = "none"; // Close menu
+    bar.style.borderRadius = "25px";
+});
+
+
+fullscreenToggle.addEventListener('change', function() {
+    if (this.checked) {
+        // Enter Fullscreen
+        if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen()
+                .catch(err => {
+                    console.log(`Error attempting to enable full-screen mode: ${err.message}`);
+                    this.checked = false; // Reset toggle if it fails
+                });
+        }
+    } else {
+        // Exit Fullscreen
+        if (document.exitFullscreen) {
+            document.exitFullscreen()
+                .catch(err => console.log(err));
+        }
+    }
+});
+
+// Volume Slider Listeners
+document.getElementById('gain-drone').addEventListener('input', (e) => {
+    const val = parseFloat(e.target.value);
+    if (audioGains.drone) audioGains.drone.gain.setTargetAtTime(val, audioCtx.currentTime, 0.1);
+});
+
+document.getElementById('gain-somatic').addEventListener('input', (e) => {
+    const val = parseFloat(e.target.value);
+    if (audioGains.somatic) audioGains.somatic.gain.setTargetAtTime(val, audioCtx.currentTime, 0.1);
+});
+
+document.getElementById('gain-noise').addEventListener('input', (e) => {
+    const val = parseFloat(e.target.value);
+    if (audioGains.noise) audioGains.noise.gain.setTargetAtTime(val, audioCtx.currentTime, 0.1);
+});
+
+
+// Sync the checkbox state if the user presses 'Esc' key to exit fullscreen
+document.addEventListener('fullscreenchange', () => {
+    if (!document.fullscreenElement) {
+        fullscreenToggle.checked = false;
+    } else {
+        fullscreenToggle.checked = true;
+    }
+});
+</script>
 </body>
 </html>

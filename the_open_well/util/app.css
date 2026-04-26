@@ -1,0 +1,223 @@
+/* 
+   COMMUNITY WELL - STANDARD SANCTUARY DESIGN
+   A cohesive visual language for all mindfulness tools.
+*/
+
+:root {
+  --bg-color: #fcfbf9;       /* Soft cream */
+  --text-color: #444;        /* Soft charcoal */
+  --accent-color: #5a7d7c;   /* Muted sage green */
+  --border-color: #e0ddd5;   /* Warm linen border */
+  --glass-bg: rgba(255, 255, 255, 0.6);
+  --white: #ffffff;
+  --grey-muted: #888;
+  --grey-light: #aaa;
+}
+
+/* --- Global Reset & Base --- */
+body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: "Georgia", serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  overflow: hidden;
+  transition: background-color 2s ease;
+}
+
+/* Ambient background for all apps */
+body::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: radial-gradient(circle at center, #fff 0%, #f2f0eb 100%);
+  z-index: -1;
+}
+
+/* --- Typography --- */
+h1 {
+  font-weight: 400;
+  font-size: 2.2rem;
+  letter-spacing: 3px;
+  margin-bottom: 0.5rem;
+  color: var(--text-color);
+  opacity: 0.8;
+  text-align: center;
+}
+
+.version {
+  font-size: 0.7rem;
+  color: var(--grey-light);
+  margin-bottom: 3rem;
+  letter-spacing: 1px;
+  text-align: center;
+}
+
+/* --- Form Elements & Inputs --- */
+.time-setup {
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.2rem;
+}
+
+input[type=number] {
+  width: 60px;
+  font-family: "Georgia", serif;
+  font-size: 1.2rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 5px;
+  text-align: center;
+  background: transparent;
+  color: var(--text-color);
+}
+
+select {
+  padding: 5px 10px;
+  border-radius: 5px;
+  border: 1px solid var(--border-color);
+  font-family: "Georgia", serif;
+  background: var(--white);
+  color: var(--text-color);
+  margin-top: 10px;
+}
+
+/* --- Button Component Library --- */
+
+/* Standard Primary Button (The "Begin" style) */
+.btn-primary, #start, #begin {
+  background: var(--white);
+  border: 1px solid var(--border-color);
+  border-radius: 50px;
+  padding: 1.2rem 3rem;
+  font-family: "Georgia", serif;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  color: var(--accent-color);
+  cursor: pointer;
+  transition: all 0.4s ease;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  text-transform: uppercase;
+}
+
+.btn-primary:hover, #start:hover, #begin:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+  background: var(--bg-color);
+}
+
+/* Standard Secondary/Small Button (The "Options" style) */
+.btn-secondary, input[type=button] {
+  background: var(--white);
+  border: 1px solid var(--border-color);
+  border-radius: 15px;
+  padding: 8px 15px;
+  font-family: "Georgia", serif;
+  font-size: 0.8rem;
+  cursor: pointer;
+  color: #777;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover, input[type=button]:hover {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+}
+
+/* --- Progress & Visual Feedback --- */
+.measure {
+  display: inline-block;
+  position: relative;
+  width: 240px;
+  height: 6px;
+  background: var(--border-color);
+  border-radius: 10px;
+  margin: 3rem 0;
+  overflow: hidden;
+}
+
+.inside {
+  position: absolute;
+  bottom: 0;
+  height: 100%;
+  left: 0;
+  background: var(--accent-color);
+  border-radius: 10px;
+  transition: width 0.3s linear;
+}
+
+/* --- Glass Settings Panel --- */
+.settings {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 400px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.05);
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
+#bar {
+  padding: 1rem;
+  text-align: center;
+  cursor: pointer;
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  color: var(--grey-muted);
+  font-weight: bold;
+  border-radius: 20px 20px 0 0;
+  text-transform: uppercase;
+}
+
+.controls {
+  padding: 1.5rem;
+  text-align: center;
+  font-size: 0.9rem;
+  border-top: 1px solid var(--border-color);
+  border-radius: 0 0 20px 20px;
+}
+
+/* Generic Setting Group (for sliders/toggles) */
+.setting-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-bottom: 1.5rem;
+}
+
+.setting-group label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--accent-color);
+  opacity: 0.8;
+}
+
+.slider-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  font-size: 0.8rem;
+  color: #777;
+}
+
+input[type="range"] {
+  flex: 1;
+  cursor: pointer;
+  accent-color: var(--accent-color);
+}
