@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOMA: Celestial Aeon</title>
+    <style>
+        body { margin: 0; overflow: hidden; background: #000; cursor: pointer; }
+        #paintCanvas { display: block; width: 100vw; height: 100vh; opacity: 0; transition: opacity 15s ease; }
+        #glCanvas { display: none; }
+        #overlay { 
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            color: #fff; font-family: 'Georgia', serif; text-align: center;
+            transition: opacity 5s ease;
+            text-shadow: 0 0 20px #000; z-index: 10;
+        }
+        h1 { font-weight: 100; letter-spacing: 15px; opacity: 0.6; }
+        p { font-size: 0.7rem; letter-spacing: 4px; opacity: 0.3; text-transform: uppercase; }
+    </style>
+</head>
+<body onclick="startExperience()">
+    <div id="overlay">
+        <h1 id="title">SOMA</h1>
+        <p id="subtitle">Deep slumber for insomniacs</p>
+    </div>
+    <canvas id="paintCanvas"></canvas>
+    <canvas id="glCanvas"></canvas>
+
+    <script id="vs" type="x-shader/x-vertex">
+        attribute vec2 position;
+        void main() { gl_Position = vec4(position, 0.0, 1.0); }
+    </script>
+
+    <script id="fs" type="x-shader/x-fragment">
+        precision highp float;
+        uniform vec2 u_resolution;
+        uniform float u_time;
+        uniform float u_seed;
+        uniform float u_sync; 
+        uniform float u_collision; 
+
+        float hash(float n) { return fract(sin(n * 129.898) * 43758.5453123); }
+
+        float get_cicadic_weight(float layerIdx, float seed, float channelOffset) {
+            float t = u_time * 0.5; 
+            float phase1 = sin(t * 0.01 + layerIdx * 1.1 + seed + channelOffset);
+            float phase2 = sin(t * 0.03 + layerIdx * 2.3 + seed + channelOffset * 1.2);
+            float phase3 = sin(t * 0.07 + layerIdx * 3.7 + seed + channelOffset * 1.5);
+            return (phase1 + phase2 + phase3) * 0.8;
+        }
+
+        float neural_layer(vec2 p, float seed, float layerIdx, float prevVal, float channelOffset) {
+            float w1 = hash(seed + layerIdx * 101.1 + channelOffset);
+            float w2 = hash(seed + layerIdx * 202.2 + channelOffset);
+            float w3 = hash(seed + layerIdx * 303.3 + channelOffset);
+            float mod = get_cicadic_weight(layerIdx, seed, channelOffset);
+            p = abs(p) - 0.5; 
+            float angle = atan(p.y, p.x);
+            float radius = length(p);
+            float val = angle * (w1 + mod) + radius * (w2 + mod) + (prevVal * 0.5) + u_time * 0.1;
+            return sin(val * 3.0 + w3 + mod) * cos(val * 1.2 + mod);
+        }
+
+        float neural_net(vec2 p, float seed, float channelOffset) {
+            float acc = 0.0;
+            float amplitude = 1.0;
+            float prevVal = 0.0;
+            for(int i = 0; i < 8; i++) {
+                float currentLayer = neural_layer(p, seed, float(i), prevVal, channelOffset);
+                acc += amplitude * currentLayer;
+                prevVal = currentLayer;
+                float s = sin(u_time * 0.005);
+                float c = cos(u_time * 0.004);
+                p = vec2(p.x * c - p.y * s, p.x * s + p.y * c) * 2.2 + 0.1;
+                amplitude *= 0.55;
+            }
+            return acc;
+        }
+
+        void main() {
+            vec2 uv = (gl_FragCoord.xy * 2.0 - u_resolution.xy) / min(u_resolution.y, u_resolution.x);
+            float totalInfluence = 0.0;
+            vec2 combinedVector = vec2(0.0);
+            float slowShift = sin(u_time * 0.2) * 0.5 + 0.5;
+
+            for(float i = 0.0; i < 7.0; i++) {
+                vec2 targetA = vec2(sin(u_time * 0.02 + i * 1.1), sin(u_time * 0.03 + i * 0.8)) * 0.7;
+                vec2 targetB = vec2(sin(u_time * 0.05 + i * 2.2), cos(u_time * 0.04 + i * 1.5)) * 0.5;
+                vec2 finalP = mix(targetA, targetB, slowShift);
+                float d = length(uv - finalP);
+                float influence = (0.15 + u_sync * 0.1 + u_collision * 0.2) / (d * d + 0.05); 
+                totalInfluence += influence;
+                combinedVector += (uv - finalP) * influence;
+            }
+
+            vec2 neuralInput = combinedVector / (totalInfluence + 0.001);
+            float nR = neural_net(neuralInput, u_seed, 3.0);
+            float nG = neural_net(neuralInput, u_seed, 11.0);
+            float nB = neural_net(neuralInput, u_seed, 19.0);
+            
+            vec3 neuralColor = vec3(smoothstep(-1.2, 1.2, nR), smoothstep(-1.2, 1.2, nG), smoothstep(-1.2, 1.2, nB));
+            vec3 tintA = vec3(0.3, 0.0, 0.5); 
+            vec3 tintB = vec3(0.0, 0.6, 0.7);
+            vec3 currentTint = mix(tintA, tintB, u_sync);
+            vec3 baseColor = mix(neuralColor * currentTint, vec3(1.0, 0.9, 0.7), u_collision * 0.5);
+            baseColor += vec3(0.01, 0.01, 0.03);
+
+            float alpha = smoothstep(0.5, 1.5, totalInfluence); 
+            float avgIntensity = (nR + nG + nB) / 3.0;
+            alpha *= (smoothstep(-1.0, 1.0, avgIntensity) * 0.8 + 0.2); 
+            
+            vec3 finalColor = baseColor * alpha;
+            float bloom = max(max(nR, nG), nB);
+            finalColor += (currentTint * bloom * pow(totalInfluence, 2.0) * (0.01 + u_collision * 0.05));
+            float mask = smoothstep(1.5, 0.5, length(uv));
+            gl_FragColor = vec4(finalColor, alpha * mask);
+        }
+    </script>
+
+    <script>
+        let audioCtx;
+        let globalSync = 0;
+        let collisionIntensity = 0;
+        let experienceStarted = false;
+        let noiseFilters = [];
+
+        const glCanvas = document.getElementById('glCanvas');
+        const paintCanvas = document.getElementById('paintCanvas');
+        const gl = glCanvas.getContext('webgl', { premultipliedAlpha: false });
+        const ctx = paintCanvas.getContext('2d');
+
+        function createShader(gl, type, source) {
+            const s = gl.createShader(type); gl.shaderSource(s, source); gl.compileShader(s); return s;
+        }
+        const program = gl.createProgram();
+        gl.attachShader(program, createShader(gl, gl.VERTEX_SHADER, document.getElementById('vs').text));
+        gl.attachShader(program, createShader(gl, gl.FRAGMENT_SHADER, document.getElementById('fs').text));
+        gl.linkProgram(program); gl.useProgram(program);
+        const vertices = new Float32Array([-1,-1, 1,-1, -1,1, -1,1, 1,-1, 1,1]);
+        const buffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+        gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+        const posLoc = gl.getAttribLocation(program, 'position');
+        gl.enableVertexAttribArray(posLoc);
+        gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
+        const resLoc = gl.getUniformLocation(program, 'u_resolution');
+        const timeLoc = gl.getUniformLocation(program, 'u_time');
+        const seedLoc = gl.getUniformLocation(program, 'u_seed');
+        const syncLoc = gl.getUniformLocation(program, 'u_sync');
+        const collLoc = gl.getUniformLocation(program, 'u_collision');
+
+        const brushSize = 1500; 
+        glCanvas.width = brushSize; glCanvas.height = brushSize;
+        gl.viewport(0, 0, brushSize, brushSize);
+        const randomSeed = Math.random() * 1000;
+
+        function initDeepSlumber() {
+            const binauralBase = 110 / 2;
+            const binauralDiff = 6;
+            const numVoices = 12;
+            
+            const slumberMasterGain = audioCtx.createGain();
+            slumberMasterGain.gain.value = 0;
+            slumberMasterGain.connect(audioCtx.destination);
+            slumberMasterGain.gain.linearRampToValueAtTime(0.2, audioCtx.currentTime + 15);
+
+            setInterval(() => {
+                const t = audioCtx.currentTime;
+                const wave1 = Math.sin(t * 0.04); 
+                const wave2 = Math.sin(t * 0.071); 
+                const combined = (wave1 + wave2) / 2;
+                const volume = 0.15 + (combined * 0.1); 
+                slumberMasterGain.gain.setTargetAtTime(Math.max(0.01, volume), t, 1.5);
+            }, 150);
+
+            for(let v = 0; v < numVoices; v++) {
+                const voiceSeed = Math.random() * 1000;
+                const pitchMult = [0.5, 1.0, 1.5, 2.0][v % 4];
+                const pannerL = audioCtx.createStereoPanner(); pannerL.pan.value = -1;
+                const pannerR = audioCtx.createStereoPanner(); pannerR.pan.value = 1;
+                const oscL = audioCtx.createOscillator(); oscL.type = 'sine';
+                oscL.frequency.value = binauralBase * pitchMult;
+                const oscR = audioCtx.createOscillator(); oscR.type = 'sine';
+                oscR.frequency.value = (binauralBase + binauralDiff) * pitchMult;
+                const voiceGain = audioCtx.createGain();
+                voiceGain.gain.value = 0;
+
+                setInterval(() => {
+                    const t = audioCtx.currentTime;
+                    const vMod = (Math.sin(t * 0.1 + v) + Math.sin(t * 0.07 + v * 1.5) + Math.sin(t * 0.03 + v * 2)) / 3;
+                    voiceGain.gain.setTargetAtTime((vMod * 0.1) + 0.1, t, 0.1);
+                }, 100);
+
+                const filter = audioCtx.createBiquadFilter();
+                filter.type = 'bandpass';
+                filter.frequency.value = 800;
+                filter.Q.value = 1;
+                const processor = audioCtx.createScriptProcessor(4096, 1, 1);
+                const hash = (n) => { const x = Math.sin(n) * 129.898; return x - Math.floor(x); };
+
+                processor.onaudioprocess = (e) => {
+                    const t = audioCtx.currentTime;
+                    let p = Math.sin(t * 0.05 + v);
+                    let acc = 0; let amplitude = 1.0; let currentP = p;
+                    for (let layer = 0; layer < 4; layer++) {
+                        const mod = Math.sin(t * 0.1 + layer) * 0.5;
+                        const w1 = hash(voiceSeed + layer * 101) + mod;
+                        currentP = Math.abs(currentP) - 0.5;
+                        acc += amplitude * Math.sin(currentP * w1 * 3.0);
+                        currentP *= 1.6; amplitude *= 0.6;
+                    }
+                    filter.Q.setTargetAtTime(1 + (acc * 20), t, 0.1);
+                    filter.frequency.setTargetAtTime(800 + (acc * 400), t, 0.1);
+                };
+
+                oscL.connect(pannerL); pannerL.connect(filter);
+                oscR.connect(pannerR); pannerR.connect(filter);
+                filter.connect(voiceGain);
+                voiceGain.connect(slumberMasterGain);
+                oscL.start(); oscR.start();
+                const silentGain = audioCtx.createGain(); silentGain.gain.value = 0;
+                processor.connect(silentGain); silentGain.connect(audioCtx.destination);
+            }
+        }
+
+        async function initAudio() {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            initDeepSlumber();
+
+            // RESTORED THROAT-CLICK Synthesis
+            const masterThroatGain = audioCtx.createGain();
+            masterThroatGain.gain.value = 0;
+            masterThroatGain.connect(audioCtx.destination);
+            setTimeout(() => {
+                masterThroatGain.gain.linearRampToValueAtTime(0.3, audioCtx.currentTime + 12);
+            }, 15000);
+
+            setInterval(() => {
+                const t = audioCtx.currentTime;
+                const wave = (Math.sin(t * 0.07) + Math.sin(t * 0.03) + Math.sin(t * 0.01)) / 3;
+                const volume = 0.15 + (wave * 0.05 + 0.05); 
+                masterThroatGain.gain.setTargetAtTime(volume, t, 0.5);
+            }, 100);
+
+            const throatVoices = 6;
+            for(let v = 0; v < throatVoices; v++) {
+                const voiceSeed = Math.random() * 1000;
+                const baseFreq = 110 * (1 + (Math.random() * 0.02));
+                const processor = audioCtx.createScriptProcessor(4096, 1, 1);
+                let sampleIdx = 0;
+                const hash = (n) => { const x = Math.sin(n) * 129.898; return x - Math.floor(x); };
+                processor.onaudioprocess = (e) => {
+                    const output = e.outputBuffer.getChannelData(0);
+                    const t = audioCtx.currentTime;
+                    for (let i = 0; i < 4096; i++) {
+                        let p = Math.sin(2 * Math.PI * baseFreq * t + (sampleIdx * 0.0001));
+                        let acc = 0; let amplitude = 1.0; let currentP = p; let prevVal = 0;
+                        for (let layer = 0; layer < 4; layer++) {
+                            const mod = Math.sin(t * 0.1 + layer + v) * 0.4;
+                            const w1 = hash(voiceSeed + layer * 101) + mod;
+                            currentP = Math.abs(currentP) - 0.5;
+                            let val = currentP * w1 + prevVal * 0.3;
+                            let layerOut = Math.sin(val * 2.0) * Math.cos(val * 0.8);
+                            acc += amplitude * layerOut; prevVal = layerOut; currentP *= 1.8; amplitude *= 0.6;
+                        }
+                        output[i] = Math.tanh(acc * 0.4); sampleIdx++;
+                    }
+                };
+                const f1 = audioCtx.createBiquadFilter(); f1.type = 'bandpass'; f1.Q.value = 10;
+                const f2 = audioCtx.createBiquadFilter(); f2.type = 'bandpass'; f2.Q.value = 10;
+                const f3 = audioCtx.createBiquadFilter(); f3.type = 'bandpass'; f3.Q.value = 10;
+                const modulateT = () => {
+                    const morph = Math.sin(audioCtx.currentTime * 0.2 + v) * 0.5 + 0.5;
+                    f1.frequency.setValueAtTime(400 + (morph * 300), audioCtx.currentTime);
+                    f2.frequency.setValueAtTime(800 + (morph * 400), audioCtx.currentTime);
+                    f3.frequency.setValueAtTime(1200 + (morph * 1300), audioCtx.currentTime);
+                };
+                setInterval(modulateT, 50);
+                const voiceGain = audioCtx.createGain(); voiceGain.gain.value = 0.15;
+                processor.connect(f1); processor.connect(f2); processor.connect(f3);
+                f1.connect(voiceGain); f2.connect(voiceGain); f3.connect(voiceGain);
+                voiceGain.connect(masterThroatGain);
+            }
+
+            // BALANCED NOISE (Reduced gain to be atmospheric, not overbearing)
+            const channels = ['L', 'R'];
+            channels.forEach(ch => {
+                const seed = Math.random() * 1000;
+                const processor = audioCtx.createScriptProcessor(4096, 1, 1);
+                const hash = (n) => { const x = Math.sin(n) * 129.898; return x - Math.floor(x); };
+                processor.onaudioprocess = (e) => {
+                    const output = e.outputBuffer.getChannelData(0);
+                    const t = audioCtx.currentTime;
+                    for (let i = 0; i < 4096; i++) {
+                        let p = (Math.random() * 2 - 1);
+                        let acc = 0; let amplitude = 1.0; let currentP = p; let prevVal = 0;
+                        for (let layer = 0; layer < 5; layer++) {
+                            const mod = Math.sin(t * 0.1 + layer) * 0.4;
+                            const w1 = hash(seed + layer * 101) + mod;
+                            currentP = Math.abs(currentP) - 0.5;
+                            let val = currentP * w1 + prevVal * 0.2;
+                            acc += amplitude * Math.sin(val * 2.0);
+                            prevVal = Math.sin(val * 2.0);
+                            currentP *= 1.2; amplitude *= 0.6;
+                        }
+                        output[i] = acc * 0.1;
+                    }
+                };
+                const filter = audioCtx.createBiquadFilter();
+                filter.type = 'lowpass'; filter.frequency.value = 400;
+                noiseFilters.push(filter); 
+                const panner = audioCtx.createStereoPanner();
+                panner.pan.value = (ch === 'L') ? -1 : 1;
+                const gain = audioCtx.createGain(); 
+                gain.gain.value = 0.12; // Lowered from 0.3
+                processor.connect(filter); filter.connect(panner); panner.connect(gain); gain.connect(audioCtx.destination);
+            });
+
+            const binauralBase = 27.5; const binauralDiff = 6; 
+            for(let v=0; v<6; v++) {
+                const pL = audioCtx.createStereoPanner(); pL.pan.value = -1;
+                const pR = audioCtx.createStereoPanner(); pR.pan.value = 1;
+                const oL = audioCtx.createOscillator(); oL.type = 'sine'; oL.frequency.value = binauralBase * (v % 3 + 1);
+                const oR = audioCtx.createOscillator(); oR.type = 'sine'; oR.frequency.value = (binauralBase + binauralDiff) * (v % 3 + 1);
+                const vGain = audioCtx.createGain(); vGain.gain.value = 0.04;
+                oL.connect(pL); pL.connect(vGain); oR.connect(pR); pR.connect(vGain); vGain.connect(audioCtx.destination);
+                oL.start(); oR.start();
+            }
+
+            setInterval(() => {
+                const t = audioCtx.currentTime;
+                globalSync = (Math.sin(t * 0.05) + Math.sin(t * 0.03) + Math.sin(t * 0.01)) / 3;
+                globalSync = (globalSync * 0.5) + 0.5;
+                noiseFilters.forEach(f => {
+                    const targetFreq = 300 + (collisionIntensity * 2500);
+                    f.frequency.setTargetAtTime(targetFreq, t, 0.1);
+                });
+            }, 50);
+        }
+
+        function render(time) {
+            time *= 0.001;
+            const particles = [];
+            const slowShift = Math.sin(time * 0.2) * 0.5 + 0.5;
+            for(let i=0; i<7; i++) {
+                const tA = { x: Math.sin(time * 0.02 + i * 1.1), y: Math.sin(time * 0.03 + i * 0.8) };
+                const tB = { x: Math.sin(time * 0.05 + i * 2.2), y: Math.cos(time * 0.04 + i * 1.5) };
+                particles.push({ 
+                    x: (tA.x * (1 - slowShift) + tB.x * slowShift) * 0.7, 
+                    y: (tA.y * (1 - slowShift) + tB.y * slowShift) * 0.7 
+                });
+            }
+            let minDistance = 1.0;
+            for(let i=0; i<particles.length; i++) {
+                for(let j=i+1; j<particles.length; j++) {
+                    const d = Math.hypot(particles[i].x - particles[j].x, particles[i].y - particles[j].y);
+                    if(d < minDistance) minDistance = d;
+                }
+            }
+            collisionIntensity = Math.max(0, 1.0 - (minDistance / 0.4));
+            gl.uniform2f(resLoc, brushSize, brushSize);
+            gl.uniform1f(timeLoc, time);
+            gl.uniform1f(seedLoc, randomSeed);
+            gl.uniform1f(syncLoc, globalSync); 
+            gl.uniform1f(collLoc, collisionIntensity);
+            gl.clearColor(0,0,0,0); gl.clear(gl.COLOR_BUFFER_BIT);
+            gl.drawArrays(gl.TRIANGLES, 0, 6);
+            if (paintCanvas.width !== window.innerWidth || paintCanvas.height !== window.innerHeight) {
+                paintCanvas.width = window.innerWidth; paintCanvas.height = window.innerHeight;
+            }
+            ctx.globalAlpha = 0.1; 
+            ctx.drawImage(paintCanvas, -1, -1, paintCanvas.width+2, paintCanvas.height+2);
+            const cX = (Math.sin(time * 0.1) * 0.1 + 0.5) * paintCanvas.width;
+            const cY = (Math.cos(time * 0.13) * 0.1 + 0.5) * paintCanvas.height;
+            ctx.globalAlpha = 0.03; 
+            ctx.drawImage(glCanvas, cX - brushSize/2, cY - brushSize/2);
+            requestAnimationFrame(render);
+        }
+
+        async function startExperience() {
+            if (experienceStarted) return;
+            experienceStarted = true;
+            
+            // GO FULLSCREEN
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen().catch(e => console.log(e));
+            }
+
+            await initAudio();
+            setTimeout(() => {
+                document.getElementById('overlay').style.opacity = '0';
+                document.getElementById('paintCanvas').style.opacity = '1';
+            }, 4000);
+        }
+
+        window.addEventListener('click', startExperience);
+        requestAnimationFrame(render);
+    </script>
+</body>
+</html>
