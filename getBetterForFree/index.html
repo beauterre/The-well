@@ -3,91 +3,159 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Better — Free Apps for Getting Better</title>
+  <title>Better — A Community Well of Tools</title>
   <style>
+    :root {
+      --bg-color: #fcfbf9; /* Soft cream instead of stark white */
+      --text-color: #333;
+      --accent-color: #5a7d7c; /* Muted sage green for peace/healing */
+      --border-color: #e0ddd5;
+    }
     body {
-      font-family: system-ui, sans-serif;
-      background-color: #fafafa;
-      color: #222;
+      font-family: "Georgia", serif; /* Serif font feels more human and timeless */
+      background-color: var(--bg-color);
+      color: var(--text-color);
       margin: 0;
       padding: 0;
       display: flex;
       flex-direction: column;
       min-height: 100vh;
+      line-height: 1.7;
     }
     header {
-      background: #fff;
-      border-bottom: 1px solid #ddd;
-      padding: 1rem 2rem;
+      padding: 4rem 2rem 2rem;
       text-align: center;
     }
     header h1 {
       margin: 0;
-      font-weight: 600;
+      font-weight: 400;
+      font-size: 2.5rem;
+      letter-spacing: 2px;
+    }
+    header p {
+      font-style: italic;
+      color: #666;
+      max-width: 500px;
+      margin: 1rem auto 0;
     }
     main {
       flex: 1;
-      max-width: 700px;
-      margin: 3rem auto;
-      padding: 0 1rem;
+      max-width: 650px;
+      margin: 0 auto 4rem;
+      padding: 0 1.5rem;
       text-align: center;
     }
-    main p {
-      line-height: 1.6;
+    .intro-text {
+      font-size: 1.1rem;
+      margin-bottom: 3rem;
+      color: #444;
+    }
+    .manifesto {
+      font-size: 0.95rem;
+      background: #fff;
+      border: 1px solid var(--border-color);
+      padding: 2rem;
+      border-radius: 15px;
+      margin-bottom: 3rem;
+      text-align: left;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.02);
     }
     .apps {
-      margin-top: 2rem;
+      display: grid;
+      gap: 1.5rem;
     }
     .app {
       background: #fff;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      padding: 1.5rem;
-      margin: 1rem 0;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 2rem;
+      transition: transform 0.2s ease;
+      text-align: left;
+    }
+    .app:hover {
+      transform: translateY(-3px);
+      border-color: var(--accent-color);
     }
     .app h2 {
       margin-top: 0;
+      font-weight: 500;
+      font-size: 1.4rem;
+    }
+    .app h2 a {
+      color: var(--accent-color);
+      text-decoration: none;
+    }
+    .app p {
+      margin-bottom: 0;
+      color: #555;
     }
     footer {
       text-align: center;
-      padding: 1rem;
-      border-top: 1px solid #ddd;
+      padding: 3rem 1rem;
+      border-top: 1px solid var(--border-color);
       background: #fff;
     }
-    a {
-      color: #0077cc;
+    .donation-link {
+      font-size: 1.1rem;
+      color: var(--accent-color);
       text-decoration: none;
+      font-weight: 500;
+      border-bottom: 1px solid var(--accent-color);
     }
-    a:hover {
-      text-decoration: underline;
+    .footer-note {
+      font-size: 0.85rem;
+      color: #888;
+      margin-top: 1.5rem;
     }
   </style>
 </head>
 <body>
   <header>
     <h1>Better</h1>
-    <p>Free apps to help people get better — whatever that means to you.</p>
+    <p>Simple tools for the journey back to yourself.</p>
   </header>
 
   <main>
-    <p>
-      Nobody knows the whole truth. Each eye sees a little differently; neither is wrong.
-      What matters is to keep looking, keep adjusting, and stay kind to the limits of your sight.
-    </p>
+    <div class="intro-text">
+      <p>
+        Nobody knows the whole truth. Each eye sees a little differently; neither is wrong.
+        What matters is to keep looking, keep adjusting, and stay kind to the limits of your sight.
+      </p>
+    </div>
+
+    <section class="manifesto">
+      <p>
+        <strong>How free is free?</strong> As free as we can make it. <br><br>
+        There are no commercials here, no nags, and no hidden costs. These tools are a "community well"—available to anyone who is thirsty. 
+        <br><br>
+        If you find a place within yourself that knows you have enough to share, we are delighted to receive a donation. But if you need this for free to turn your life around, it is yours. We are simply here to support you.
+      </p>
+    </section>
 
     <section class="apps">
-      <p>How free is free? As free as we can make it.. you can install this site on your phone, as if it is an app, no commercials, no nags. As with all our apps. If you can find the place in yourself, that knows that you have enough... to share... Then yes.. we are delighted to get a donation, you can find the donation page at the end of the page. If you feel you need it for free.. it is yours. Turn your life around, help others do the same. We'll be here to support you.</p>
+      <!-- Quit Smoking -->
       <div class="app">
         <h2><a href="virtualsmoke/index.html">Quit Smoking</a></h2>
-        <p>A simple app to help you stop smoking — not through science or slogans,
-        but through awareness, honesty, and your own timing.</p>
+        <p>Not through slogans or science, but through awareness, honesty, and your own timing.</p>
+      </div>
+
+      <!-- Meditation App -->
+      <div class="app">
+        <h2><a href="meditation/index.html">Stillness</a></h2>
+        <p>A space to practice the enjoyment of being. Experience over the quality of experience.</p>
+      </div>
+
+      <!-- Insomniac App -->
+      <div class="app">
+        <h2><a href="sleep/index.html">Rest</a></h2>
+        <p>Gently guiding the mind back to the body, allowing the day to dissolve into peace.</p>
       </div>
     </section>
   </main>
 
   <footer>
-    <p><a href="donations.html">Support these projects</a></p>
-    <p style="font-size: 0.9em; color: #666;">
+    <p><a href="donations.html" class="donation-link">Support the Well</a></p>
+    <p class="footer-note">
       No promises, no doctrine — just tools for better choices.
     </p>
   </footer>
