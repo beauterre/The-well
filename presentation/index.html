@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Аязмото</title>
+    <style>
+        :root {
+            --bg-color: #fdfcf8; 
+            --text-color: #4a4a4a;
+            --accent-color: #8a9a5b; 
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            height: 100%; width: 100%;
+            font-family: 'Georgia', serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow: hidden;
+        }
+
+        .slider-container {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #bg { z-index: 1; }
+        #slider { z-index: 2; pointer-events: none; }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            opacity: 0;
+            /* We keep the fade-in for the NEW text */
+            transition: opacity 4.5s ease-in-out;
+        }
+
+        .slide.active { opacity: 1; }
+
+        /* Wrapper to handle vibrant color bloom */
+        .bg-image-wrapper {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            opacity: 0; 
+            z-index: -1;
+        }
+
+        .bg-image {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-size: cover;
+            background-position: center;
+            z-index: 1;
+        }
+
+        .bg-overlay {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: var(--bg-color);
+            z-index: 2;
+            opacity: 1;
+        }
+
+        .content-box {
+            max-width: 800px;
+            padding: 20px;
+            opacity: 1;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: normal;
+            color: var(--accent-color);
+            margin-bottom: 1.5rem;
+        }
+
+        p {
+            font-size: 1.6rem;
+            line-height: 1.8;
+            font-style: italic;
+        }
+
+        .controls {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            gap: 15px;
+            z-index: 10;
+        }
+
+        button {
+            background: rgba(255,255,255,0.5);
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            padding: 8px 16px;
+            cursor: pointer;
+            font-family: 'Georgia', serif;
+            border-radius: 20px;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: var(--accent-color);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="slider-container" id="bg"></div>
+    <div class="slider-container" id="slider"></div>
+
+    <div class="controls">
+        <button onclick="prevSlide()">←</button>
+        <button onclick="nextSlide()">→</button>
+    </div>
+
+    <script>
+        const TEST_MODE = false; 
+        const TOTAL_DURATION = TEST_MODE ? 5000 : 60000; 
+        const IMAGE_START_DELAY = TEST_MODE ? 1000 : 10000; 
+        const FINAL_IMAGE_VISIBILITY = 1.0; 
+
+        const presentationData = [
+            { title: 'Gratitude', content: 'A moment of silence <br>and gratitude for<br>the attention of Thiện Chí TRỜI. <br> no question..', img: 'thankfulness1.jpg' },
+            { title: 'How', content: 'Three years ago<br>Thích Nhất Hạnh<br>Soen Ozeki<br>zen<br>the well within<br>', img: 'stroke.jpg' },
+         //   { title: 'Why', content: '路迪凡特, A way to shine light upon the remarkableness of the ordinary.', img: 'ludifant.jpg' },
+            { title: 'Why, Аязмото', content: 'Bulgaria Ayazmo (Tsarino, Rodopi), wells', img: 'ayazmo3.jpg' },
+            { title: 'You', content: 'Please tell me about your journey', img: 'journey.jpg' },
+            { title: 'Synchronicity', content: 'Little miracles', img: 'flamingo.jpg' },
+            { title: 'Who', content: 'for everybody', img: 'everybody.jpg' },
+            { title: 'The well diggers', content: 'The team', img: 'sferika2.jpg' },
+            { title: 'СФЕРИКА', content: 'Геодезични Куполни Градежи - Spherica Domes', img: 'sferika6.jpg' },
+            { title: 'The fear', content: 'You will be taken advantage of..', img: 'resonance4.jpg' },
+            { title: 'The dharma', content: 'One day rule..', img: 'permaculture-artist-impression.png' },
+            { title: 'The reaction', content: '', img: 'answer.jpg' },
+            { title: 'Thank you', content: '', img: 'gratitude.jpg' }
+        ];
+
+        let currentSlide = 0;
+        const bgContainer = document.getElementById('bg');
+        const sliderContainer = document.getElementById('slider');
+        let animationId = null;
+
+        function init() {
+            presentationData.forEach((data, index) => {
+                // BG Wrapper for vibrant color bloom
+                const wrapper = document.createElement('div');
+                wrapper.className = `bg-image-wrapper`;
+                wrapper.innerHTML = `
+                    <div class="bg-image" style="background-image: url('${data.img}')"></div>
+                    <div class="bg-overlay"></div>
+                `;
+                bgContainer.appendChild(wrapper);
+
+                // Text Slide
+                const textDiv = document.createElement('div');
+                textDiv.className = `slide ${index === 0 ? 'active' : ''}`;
+                textDiv.innerHTML = `
+                    <div class="content-box">
+                        <h1>${data.title}</h1>
+                        <p>${data.content}</p>
+                    </div>
+                `;
+                sliderContainer.appendChild(textDiv);
+            });
+            startMeltAndBloom();
+        }
+
+        function startMeltAndBloom() {
+            if (animationId) cancelAnimationFrame(animationId);
+
+            const slides = document.querySelectorAll('.slide');
+            const wrappers = document.querySelectorAll('.bg-image-wrapper');
+            const contentBox = slides[currentSlide].querySelector('.content-box');
+            const activeWrapper = wrappers[currentSlide];
+            const activeOverlay = activeWrapper.querySelector('.bg-overlay');
+            
+            const startTime = performance.now();
+
+            function step(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / TOTAL_DURATION, 1);
+
+                // 1. TEXT MELT
+                contentBox.style.opacity = 1 - progress*0.8;
+
+                // 2. IMAGE BLOOM
+                if (elapsed >= IMAGE_START_DELAY) {
+                    const imageProgress = (elapsed - IMAGE_START_DELAY) / (TOTAL_DURATION - IMAGE_START_DELAY);
+                    activeOverlay.style.opacity = 1 - 0.6*(imageProgress * FINAL_IMAGE_VISIBILITY);
+                    activeWrapper.style.opacity = 1; 
+                } else {
+                    activeOverlay.style.opacity = 1;
+                    activeWrapper.style.opacity = 0;
+                }
+
+                if (progress < 1) {
+                    animationId = requestAnimationFrame(step);
+                }
+            }
+            animationId = requestAnimationFrame(step);
+        }
+
+        function update() {
+            const slides = document.querySelectorAll('.slide');
+            const wrappers = document.querySelectorAll('.bg-image-wrapper');
+
+            slides.forEach((slide, i) => {
+                if (i === currentSlide) {
+                    slide.classList.add('active');
+                    slide.style.transition = "opacity 1.5s ease-in-out";
+                    slide.querySelector('.content-box').style.opacity = "1";
+                } else {
+                    // CRITICAL: Remove transition and hide instantly to prevent overlap
+                    slide.style.transition = "none"; 
+                    slide.classList.remove('active');
+                }
+            });
+
+            wrappers.forEach((wrap, i) => {
+                wrap.style.opacity = "0";
+                wrap.querySelector('.bg-overlay').style.opacity = "1";
+            });
+
+            startMeltAndBloom();
+        }
+
+        function nextSlide() {
+            if (currentSlide < presentationData.length - 1) {
+                currentSlide++;
+                update();
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                update();
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+
+        init();
+    </script>
+</body>
+</html>
