@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ayazmoto: Dynamic Cosmic Resonance</title>
+    <style>
+        body { background: #050507; color: #a0a0b0; font-family: 'Courier New', Courier, monospace; display: flex; justify-content: center; padding: 20px; margin: 0; }
+        #console { border: 1px solid #222; padding: 30px; background: #0a0a0f; box-shadow: 0 0 40px rgba(0,0,0,0.8); width: 900px; border-radius: 12px; }
+        h1 { color: #00ffcc; text-align: center; letter-spacing: 8px; margin-bottom: 5px; }
+        .subtitle { text-align: center; font-size: 0.8rem; color: #555; margin-bottom: 20px; }
+        .center-ctrl { background: #111; padding: 15px; border: 1px solid #333; margin-bottom: 20px; text-align: center; border-radius: 8px; }
+        .planet-row { display: grid; grid-template-columns: 120px 1fr 200px 60px; align-items: center; gap: 20px; padding: 10px; border-bottom: 1px solid #1a1a25; }
+        .planet-name { font-weight: bold; }
+        .wobble-label { font-size: 0.7rem; color: #777; text-align: right; }
+        input[type="range"] { width: 100%; accent-color: #00ffcc; }
+        input[type="checkbox"] { width: 20px; height: 20px; accent-color: #00ffcc; }
+        #master-ctrl { margin-top: 30px; text-align: center; border-top: 1px solid #333; padding-top: 20px; }
+        button { background: transparent; color: #00ffcc; border: 1px solid #00ffcc; padding: 15px 30px; cursor: pointer; font-family: inherit; font-size: 1rem; border-radius: 4px; }
+        button:hover { background: #00ffcc; color: #000; }
+        select { background: #000; color: #00ffcc; border: 1px solid #00ffcc; padding: 5px; font-family: inherit; }
+        .legend { font-size: 0.7rem; color: #444; margin-top: 20px; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <div id="console">
+        <h1>АЯЗМОТО</h1>
+        <div class="subtitle">DYNAMIC 2D ORBITAL RESONANCE</div>
+        <div class="center-ctrl">
+            SENSORY CENTER:
+            <select id="centerPlanet"></select>
+            <span style="margin-left: 20px; font-size: 0.8rem; color: #777;">(Real-time XY Distance Falloff)</span>
+        </div>
+        <div id="planet-list"></div>
+        <div id="master-ctrl">
+            <label for="moonWobble">GLOBAL MOON INFLUENCE:</label>
+            <input type="range" id="moonWobble" min="0" max="1" step="0.01" value="0.2">
+            <br><br>
+            <button id="startBtn">INITIALIZE RESONANCE</button>
+            <div class="legend">
+                Carrier = Orbital Freq | Modulators = Moon Mass/Period<br>
+                Positions are calculated in 2D space every frame. Volume shifts as planets orbit.
+            </div>
+        </div>
+    </div>
+
+<script>
+    var startBtn = document.getElementById('startBtn');
+    var planetListDiv = document.getElementById('planet-list');
+    var centerSelect = document.getElementById('centerPlanet');
+    var moonWobbleSlider = document.getElementById('moonWobble');
+
+    var audioCtx;
+    var masterGain;
+
+    // --- PLANETARY DATABASE ---
+    // dist: AU, period: years, freq: Hz, angle: starting rads
+    var PLANETS = [
+        { name: "Mercury", dist: 0.39, period: 0.24, freq: 947.00, color: "#b0b0b0", angle: 0, moons: [] },
+        { name: "Venus",   dist: 0.72, period: 0.62, freq: 399.40, color: "#e3bb76", angle: 1, moons: [] },
+        { name: "Earth",   dist: 1.00, period: 1.00, freq: 248.25, color: "#4b9cd3", angle: 2, moons: [{ n: "Moon", p: 27.3, m: 0.012 }] },
+        { name: "Mars",    dist: 1.52, period: 1.88, freq: 227.71, color: "#d16b4a", angle: 3, moons: [{ n: "Phobos", p: 0.31, m: 0.00000001 }, { n: "Deimos", p: 1.26, m: 0.000000005 }] },
+        { name: "Jupiter", dist: 5.20, period: 11.86, freq: 183.55, color: "#ffca9d", angle: 4, moons: [
+            { n: "Io", p: 1.76, m: 0.000015 }, { n: "Europa", p: 3.55, m: 0.000008 },
+            { n: "Ganymede", p: 7.15, m: 0.000025 }, { n: "Callisto", p: 16.6, m: 0.000016 }
+        ]},
+        { name: "Saturn",  dist: 9.54, period: 29.46, freq: 76.38,  color: "#ead6b8", angle: 5, moons: [
+            { n: "Mimas", p: 0.94, m: 0.0000003 }, { n: "Enceladus", p: 1.37, m: 0.0000001 },
+            { n: "Tethys", p: 1.88, m: 0.0000005 }, { n: "Dione", p: 2.73, m: 0.0000006 },
+            { n: "Rhea", p: 4.5, m: 0.0000008 }, { n: "Titan", p: 15.94, m: 0.002 }
+        ]},
+        { name: "Uranus",  dist: 19.2, period: 84.01, freq: 32.85,  color: "#bbe1e4", angle: 6, moons: [
+            { n: "Miranda", p: 1.41, m: 0.0000001 }, { n: "Ariel", p: 2.52, m: 0.0000002 },
+            { n: "Umbriel", p: 4.14, m: 0.0000002 }, { n: "Titania", p: 8.70, m: 0.0000004 },
+            { n: "Oberon", p: 13.4, m: 0.0000004 }
+        ]},
+        { name: "Neptune", dist: 30.0, period: 164.8, freq: 13.71,  color: "#6081ff", angle: 7, moons: [
+            { n: "Triton", p: 5.87, m: 0.00001 }
+        ]}
+    ];
+
+    var planetNodes = [];
+
+    // Init UI
+    for (var i = 0; i < PLANETS.length; i++) {
+        var p = PLANETS[i];
+        var opt = document.createElement('option');
+        opt.value = i; opt.innerText = p.name;
+        if (p.name === "Earth") opt.selected = true;
+        centerSelect.appendChild(opt);
+
+        var row = document.createElement('div');
+        row.className = 'planet-row';
+        row.innerHTML = '<div class="planet-name" style="color:' + p.color + '">' + p.name + '</div>' +
+                        '<div class="wobble-label">STATUS</div>' +
+                        '<div><span id="dist-' + i + '" style="font-size:0.7rem; color:#666;">Dist: ---</span></div>' +
+                        '<input type="checkbox" id="check-' + i + '" ' + (p.name === "Earth" ? "checked" : "") + '>';
+        planetListDiv.appendChild(row);
+    }
+
+    function initAyazmoto() {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        masterGain = audioCtx.createGain();
+        masterGain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        masterGain.connect(audioCtx.destination);
+
+        for (var i = 0; i < PLANETS.length; i++) {
+            var p = PLANETS[i];
+            var carrier = audioCtx.createOscillator();
+            var pGain = audioCtx.createGain();
+            var modSum = audioCtx.createGain();
+            
+            carrier.type = 'sine';
+            carrier.frequency.setValueAtTime(p.freq, audioCtx.currentTime);
+            pGain.gain.setValueAtTime(0, audioCtx.currentTime);
+            modSum.gain.setValueAtTime(0, audioCtx.currentTime);
+
+            p.moons.forEach(function(m) {
+                var mod = audioCtx.createOscillator();
+                var mGain = audioCtx.createGain();
+                mod.type = 'sine';
+                mod.frequency.setValueAtTime((1 / m.p) * 100, audioCtx.currentTime);
+                
+                // Linear Scaling based on mass (removed the erratic log jump)
+                mGain.gain.setValueAtTime(m.m * 1e6, audioCtx.currentTime);
+                
+                mod.connect(mGain);
+                mGain.connect(modSum);
+                mod.start();
+            });
+
+            modSum.connect(carrier.frequency);
+            carrier.connect(pGain);
+            pGain.connect(masterGain);
+            carrier.start();
+
+            planetNodes.push({ pGain: pGain, modSum: modSum, carrier: carrier });
+        }
+
+        updateUniverse();
+    }
+
+    function updateUniverse() {
+        var centerIdx = parseInt(centerSelect.value);
+        var time = audioCtx.currentTime * 0.1; // Simulation speed factor
+
+        // 1. Calculate Current XY Positions
+        var positions = [];
+        for (var i = 0; i < PLANETS.length; i++) {
+            var p = PLANETS[i];
+            // Orbital velocity inverse to period
+            var speed = 1 / p.period;
+            var x = Math.cos(p.angle + (time * speed)) * p.dist;
+            var y = Math.sin(p.angle + (time * speed)) * p.dist;
+            positions.push({ x: x, y: y });
+        }
+
+        var centerPos = positions[centerIdx];
+
+        // 2. Update Audio and UI based on 2D Distance
+        for (var i = 0; i < PLANETS.length; i++) {
+            var targetPos = positions[i];
+            var dx = centerPos.x - targetPos.x;
+            var dy = centerPos.y - targetPos.y;
+            var distance = Math.sqrt(dx*dx + dy*dy);
+            
+            // Distance falloff
+            var falloff = 1.0 / (1.0 + (distance * distance));
+            
+            var checkbox = document.getElementById('check-' + i);
+            var distLabel = document.getElementById('dist-' + i);
+            
+            if (distLabel) distLabel.innerText = "Dist: " + distance.toFixed(2) + " AU";
+
+            if (checkbox.checked) {
+                planetNodes[i].pGain.gain.setTargetAtTime(0.2 * falloff, audioCtx.currentTime, 0.1);
+                // Moon influence scaled by the Global Slider
+                var globalWobble = parseFloat(moonWobbleSlider.value);
+                planetNodes[i].modSum.gain.setTargetAtTime(globalWobble * 10, audioCtx.currentTime, 0.1);
+            } else {
+                planetNodes[i].pGain.gain.setTargetAtTime(0, audioCtx.currentTime, 0.1);
+            }
+        }
+
+        requestAnimationFrame(updateUniverse);
+    }
+
+    startBtn.addEventListener('click', function() {
+        if (!audioCtx) {
+            initAyazmoto();
+            startBtn.innerText = "RESONANCE ACTIVE";
+            startBtn.disabled = true;
+        }
+    });
+</script>
+</body>
+</html>
