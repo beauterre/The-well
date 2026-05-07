@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Аязмото - Celestial Resonance Generator</title>
+    <style>
+        body { background: #0a0a0c; color: #d1d1d1; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; overflow: hidden; }
+        #container { text-align: center; border: 1px solid #333; padding: 40px; border-radius: 50%; width: 500px; height: 500px; display: flex; flex-direction: column; justify-content: center; box-shadow: 0 0 50px rgba(0,0,0,0.5), inset 0 0 30px rgba(183,183,183,0.1); }
+        h1 { font-weight: 200; letter-spacing: 5px; color: #fff; margin-bottom: 10px; }
+        p { font-size: 0.9rem; color: #888; margin-bottom: 30px; }
+        button { background: transparent; border: 1px solid #fff; color: #fff; padding: 15px 30px; cursor: pointer; font-size: 1rem; transition: all 0.3s; letter-spacing: 2px; }
+        button:hover { background: #fff; color: #000; }
+        .controls { margin-top: 30px; display: flex; flex-direction: column; gap: 15px; align-items: center; }
+        input[type=range] { width: 200px; accent-color: #fff; }
+        label { font-size: 0.8rem; letter-spacing: 1px; }
+    </style>
+</head>
+<body>
+
+    <div id="container">
+        <h1>Аязмото</h1>
+        <p>Celestial Resonance Chamber</p>
+        
+        <button id="startBtn">INITIATE RESONANCE</button>
+
+        <div class="controls">
+            <label>Dome Resonance (Filter)</label>
+            <input type="range" id="filterFreq" min="20" max="2000" value="183.55" step="0.01">
+            <span id="freqVal">183.55 Hz</span>
+        </div>
+    </div>
+
+<script>
+    const startBtn = document.getElementById('startBtn');
+    const filterSlider = document.getElementById('filterFreq');
+    const freqVal = document.getElementById('freqVal');
+
+    // Planetary Data: Frequency (Hz) and relative mass weight for Volume
+    // Root: Jupiter (183.55Hz)
+    const planets = [
+        { name: "Jupiter", freq: 183.55, mass: 1.0 },
+        { name: "Saturn",  freq: 76.38,  mass: 0.3 },
+        { name: "Uranus",  freq: 32.85,  mass: 0.14 },
+        { name: "Neptune", freq: 13.71,  mass: 0.17 },
+        { name: "Mars",    freq: 227.71, mass: 0.01 },
+        { name: "Earth",   freq: 248.25, mass: 0.01 },
+        { name: "Venus",   freq: 399.40, mass: 0.01 },
+        { name: "Mercury", freq: 947.00, mass: 0.005 },
+        { name: "Ceres",   freq: 141.10, mass: 0.001 }
+    ];
+
+    let audioCtx;
+    let masterGain;
+    let resonanceFilter;
+
+    function initAudio() {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        // Master Volume
+        masterGain = audioCtx.createGain();
+        masterGain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+
+        // Resonance Filter (Biquad Filter)
+        // "peaking" allows us to boost a specific frequency to simulate the dome's resonance
+        resonanceFilter = audioCtx.createBiquadFilter();
+        resonanceFilter.type = "peaking"; 
+        resonanceFilter.frequency.setValueAtTime(183.55, audioCtx.currentTime);
+        resonanceFilter.Q.setValueAtTime(10, audioCtx.currentTime); // Sharpness of the peak
+        resonanceFilter.gain.setValueAtTime(15, audioCtx.currentTime); // Boost in dB
+
+        // Route: Oscillators -> Filter -> MasterGain -> Speakers
+        resonanceFilter.connect(masterGain);
+        masterGain.connect(audioCtx.destination);
+
+        // Create an oscillator for each planet
+        planets.forEach(p => {
+            const osc = audioCtx.createOscillator();
+            const pGain = audioCtx.createGain();
+
+            osc.type = 'sine'; 
+            osc.frequency.setValueAtTime(p.freq, audioCtx.currentTime);
+
+            // Volume scaled by mass (logarithmic scale to prevent clipping)
+            const volume = Math.log10(p.mass * 10 + 1) * 0.2; 
+            pGain.gain.setValueAtTime(volume, audioCtx.currentTime);
+
+            osc.connect(pGain);
+            pGain.connect(resonanceFilter);
+            osc.start();
+        });
+    }
+
+    startBtn.addEventListener('click', () => {
+        if (!audioCtx) {
+            initAudio();
+            startBtn.innerText = "RESONANCE ACTIVE";
+            startBtn.style.borderColor = "#888";
+            startBtn.style.color = "#888";
+        }
+    });
+
+    filterSlider.addEventListener('input', (e) => {
+        const val = e.target.value;
+        freqVal.innerText = val + " Hz";
+        if (resonanceFilter) {
+            resonanceFilter.frequency.setTargetAtTime(val, audioCtx.currentTime, 0.1);
+        }
+    });
+</script>
+</body>
+</html>
