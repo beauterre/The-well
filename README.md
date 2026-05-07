@@ -10,7 +10,7 @@ All information can be found in the
 Free apps to find your way back to the source are in the open well.
 - [Free apps](https://beauterre.github.io/The-well/the_open_well)
 
-[freq](Planetary-drone.html)
+[freq]([P](https://github.com/beauterre/The-well/Planetary-drone.html)
 
 
 
