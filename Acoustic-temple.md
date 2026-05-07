@@ -1,68 +1,62 @@
 # Ayazmoto: The Well of Celestial Resonance
-### A Blueprint for an Acoustic Temple Tuned to the Solar System
+### A Technical and Acoustic Blueprint for a Planetary Resonance Chamber
 
-## I. The Philosophy
-**Ayazmoto** is designed as a physical bridge between human consciousness and the orbital mechanics of our solar system. By translating the ultra-low frequencies of planetary orbits into the audible spectrum and anchoring them in a resonant architectural space, the "Well" allows the practitioner to feel the harmony of the spheres not as a concept, but as a physical vibration in the body.
+## I. Conceptual Framework
+**Ayazmoto** (The Well) is an acoustic experiment in resonance and deep time. All matter and life on Earth—including the human sensory system, neural architecture, and biological rhythms—evolved over millions of years within a gravitational environment governed by the orbital frequencies of the solar system. 
 
-The tonal center is anchored by **Jupiter**, the Great Protector and gravitational anchor of our system, creating a "Source" frequency that resonates with the practitioner at the center of the dome.
+While these frequencies exist far below the threshold of human hearing, they are constant. In physics, coupled oscillators that interact over vast periods of time tend toward synchronization. Ayazmoto is designed to shift these same celestial ratios into the audible spectrum, allowing a participant to investigate whether these frequencies can trigger a resonance within the human body and mind, potentially providing a tactile contact with the literal harmony of the universe and the scale of deep time.
 
 ---
 
 ## II. The Mathematical Derivation
 
-### 1. From Orbit to Frequency
-The orbital period (TTT) of a planet is the time it takes to complete one revolution around the Sun. The frequency (fff) is the reciprocal of this period.
+### 1. The Anchor: Jupiter
+The dome itself is the physical manifestation of Jupiter. As the largest mass in the system, Jupiter's orbital frequency provides the tonal center for the experiment.
 
-**The Anchor: Jupiter**
 - **Orbital Period (TTT):** 4,332.594,332.594,332.59 days ≈374,335,776\approx 374,335,776≈374,335,776 seconds.
 - **Raw Frequency (fff):** 1/T≈2.6714×10−91 / T \approx 2.6714 \times 10^{-9}1/T≈2.6714×10−9 Hz.
+- **The Frequency Shift:** To make this audible and physically resonant, a multiplier of 2312^{31}231 is applied, followed by a 5-octave shift (×32\times 32×32).
+- **The Dome Root Frequency:** 183.55 Hz\mathbf{183.55 \text{ Hz}}183.55 Hz
 
-### 2. The Audible Shift (The Multiplier)
-To bring this frequency into the human hearing range while preserving the exact mathematical ratios of the planets, we apply an octave-shift multiplier of 2312^{31}231.
+### 2. The Planetary Chord (The Tubes)
+While the dome handles the Jupiter root, all other significant masses in the solar system are represented as tuned tubes along the rim. These are calculated using the exact ratios of their orbital periods relative to Jupiter.
 
-- **Jupiter's Shifted Frequency:** 2.6714×10−9 Hz×2,147,483,648≈5.736 Hz2.6714 \times 10^{-9} \text{ Hz} \times 2,147,483,648 \approx 5.736 \text{ Hz}2.6714×10−9 Hz×2,147,483,648≈5.736 Hz.
-- **The Resonance Octave:** To reach a frequency that resonates within the human chest and throat for chanting, we shift this up 5 additional octaves (×32\times 32×32).
-- **The Final Root Frequency:** 183.55 Hz\mathbf{183.55 \text{ Hz}}183.55 Hz
-
-### 3. The Celestial Chord (The Ratios)
-Using the same multiplier, the other planets form a "Jazzy," microtonal chord around the Jupiter root.
-
-| Celestial Body | Exact Frequency | Interval Relation to Jupiter |
+| Body | Exact Frequency | Role in the Acoustic Space |
 | :--- | :--- | :--- |
-| **Jupiter** | **183.55 Hz** | **Root (Tonal Center)** |
-| **Mars** | **227.71 Hz** | Minor 2nd / Tension |
-| **Earth** | **248.25 Hz** | Major 7th / Ethereal |
-| **Venus** | **399.40 Hz** | Perfect 5th / Stability |
-| **Mercury** | **947.00 Hz** | High Harmonic / Brilliance |
+| **Saturn** | **76.38 Hz** | Deep Bass / Sub-harmonic |
+| **Uranus** | **32.85 Hz** | Low-end Rumble |
+| **Neptune** | **13.71 Hz** | Infrasonic Pulse |
+| **Mars** | **227.71 Hz** | Mid-range Tension |
+| **Earth** | **248.25 Hz** | Mid-range Resonance |
+| **Venus** | **399.40 Hz** | Harmonic Stability |
+| **Mercury** | **947.00 Hz** | High-frequency brilliance |
+| **Ceres** | **141.10 Hz** | Planetesimal Harmonic |
+| **Eris** | **7.22 Hz** | Outer-rim Pulse |
 
 ---
 
 ## III. Architectural Specifications
 
-### 1. The Dome (The Resonator)
-To ensure the center of the dome is the point of maximum resonance for the root frequency (183.55 Hz183.55 \text{ Hz}183.55 Hz), the radius must be a multiple of the quarter-wavelength (λ/4\lambda/4λ/4).
+### 1. The Dome Geometry
+The dome is engineered as a resonant cavity. For the center of the space to be the point of maximum pressure for the root frequency (183.55 Hz183.55 \text{ Hz}183.55 Hz), the radius is set as a multiple of the quarter-wavelength (λ/4\lambda/4λ/4).
 
-- **Speed of Sound (vvv):** 343 m/s343 \text{ m/s}343 m/s
-- **Wavelength (λ\lambdaλ):** v/f=343/183.55≈1.868 metersv / f = 343 / 183.55 \approx 1.868 \text{ meters}v/f=343/183.55≈1.868 meters
-- **Fundamental Radius unit:** 1.868/4≈0.467 meters1.868 / 4 \approx 0.467 \text{ meters}1.868/4≈0.467 meters
-- **The Chosen Radius (RRR):** 0.467 m×12=5.6 meters0.467 \text{ m} \times 12 = \mathbf{5.6 \text{ meters}}0.467 m×12=5.6 meters
+- **Speed of Sound (vvv):** ≈343 m/s\approx 343 \text{ m/s}≈343 m/s
+- **Wavelength (λ\lambdaλ):** 343/183.55≈1.868 meters343 / 183.55 \approx 1.868 \text{ meters}343/183.55≈1.868 meters
+- **Calculated Radius (RRR):** 0.467 m×12=5.6 meters0.467 \text{ m} \times 12 = \mathbf{5.6 \text{ meters}}0.467 m×12=5.6 meters
 
-At a radius of **5.6 meters**, the 183.55 Hz183.55 \text{ Hz}183.55 Hz frequency becomes a powerful standing wave. A person standing at the center (the focus) will feel the frequency amplified by the geometry of the dome.
+The interior surface should be constructed from high-density, reflective materials (such as polished concrete or stone) to minimize absorption and maximize the standing wave effect.
 
-### 2. The Rim Tubes (The Harmonics)
-Hanging along the rim of the dome are tuned tubes. Each tube is calibrated to the exact frequency of the other planets. As the practitioner chants the root frequency of Jupiter, these tubes will sympatheticlly vibrate, filling the space with the "Celestial Chord."
-
-- **Tube 1 (Mars):** Tuned to 227.71 Hz227.71 \text{ Hz}227.71 Hz
-- **Tube 2 (Earth):** Tuned to 248.25 Hz248.25 \text{ Hz}248.25 Hz
-- **Tube 3 (Venus):** Tuned to 399.40 Hz399.40 \text{ Hz}399.40 Hz
-- **Tube 4 (Mercury):** Tuned to 947.00 Hz947.00 \text{ Hz}947.00 Hz
+### 2. The Resonance Tubes
+Tubes are suspended along the rim, tuned to the frequencies listed above. These act as sympathetic resonators; when the root frequency (183.55 Hz183.55 \text{ Hz}183.55 Hz) is introduced into the space, these tubes are designed to vibrate in sympathy, creating a complex, microtonal, "jazzy" chord that surrounds the participant.
 
 ---
 
-## IV. The Experience
-When a practitioner enters **Ayazmoto** and begins to chant at **183.55 Hz183.55 \text{ Hz}183.55 Hz**, the following occurs:
-1. **Physical Sympathy:** The body's tissues vibrate in alignment with the dome's geometry.
-2. **Harmonic Activation:** The root note triggers the rim tubes, manifesting the orbital ratios of the planets as audible tones.
-3. **Cosmic Alignment:** The practitioner is no longer just "hearing" a note, but is physically embedded within a mathematical model of the solar system.
+## IV. The Experiment
+The use of Ayazmoto is an exploration of sensory and physical response. 
 
-**In the silence of the Well, the distance between the human heart and the movement of the spheres is closed.**
+The participant stands at the center of the dome and introduces a vocal or instrumental tone at **183.55 Hz183.55 \text{ Hz}183.55 Hz**. The experiment observes the resulting interaction:
+1. The resonance of the dome's geometry against the human body.
+2. The sympathetic activation of the planetary tubes.
+3. The subjective experience of the resulting acoustic environment.
+
+The goal is to observe how the human system reacts when placed inside a physical model of the solar system's orbital harmony.
