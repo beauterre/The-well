@@ -1,5 +1,11 @@
-# Ayazmoto: The Well of Celestial Resonance
-### A Technical and Acoustic Blueprint for a Planetary Resonance Chamber
+# Аязмото (Ayazmoto): The Well of Celestial Resonance
+
+
+### Аязмот, A Technical and Acoustic Blueprint for a Planetary Resonance Chamber
+
+Named after the traditional Bulgarian holy wells—sacred places of repose and communal exchange found throughout the Rodopi mountains—Аязмото is designed as a sanctuary of celestial resonance. It is a place intended for the traveler to pause, listen, and resonate with the fundamental orbital frequencies of the solar system, honoring the tradition of the well as a source of replenishment for the spirit.
+
+
 
 ## I. Conceptual Framework
 **Ayazmoto** (The Well) is an acoustic experiment in resonance and deep time. All matter and life on Earth—including the human sensory system, neural architecture, and biological rhythms—evolved over millions of years within a gravitational environment governed by the orbital frequencies of the solar system. 
