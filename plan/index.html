@@ -1,0 +1,575 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Manole Dome and Superadobe Wall — Architect’s Brief</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #20302a;
+      --muted: #56665e;
+      --accent: #356b50;
+      --paper: #fff;
+      --ground: #f2f5f1;
+      --line: #d7e0d8;
+      --soft: #f3f8f3;
+    }
+	
+	#langToggle {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--ground);
+      color: var(--ink);
+      font: 16px/1.65 system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+
+    main {
+      width: min(920px, calc(100% - 2rem));
+      margin: 2rem auto;
+      padding: clamp(1.25rem, 4vw, 3rem);
+      background: var(--paper);
+      border-radius: 12px;
+      box-shadow: 0 8px 30px rgb(20 40 25 / 8%);
+    }
+
+    h1, h2, h3 { line-height: 1.2; }
+    h1 { margin: 0 0 .5rem; font-size: clamp(2rem, 5vw, 3rem); }
+    h2 {
+      margin-top: 2rem;
+      padding-bottom: .45rem;
+      border-bottom: 1px solid var(--line);
+      color: var(--accent);
+      font-size: 1.35rem;
+    }
+    h3 {
+      margin-top: 1.25rem;
+      color: var(--accent);
+      font-size: 1.05rem;
+    }
+
+    p, ul { margin-top: .6rem; }
+    li { margin: .35rem 0; }
+    a { color: var(--accent); }
+    .subtitle, .meta, .muted { color: var(--muted); }
+
+    .callout {
+      margin: 1.5rem 0;
+      padding: 1rem 1.2rem;
+      border-left: 4px solid var(--accent);
+      background: var(--soft);
+    }
+
+    .property-reference, .dome-specifications, .translation-toggle {
+      margin-block: 2rem;
+    }
+
+    .map-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+      gap: 1.25rem;
+      align-items: start;
+    }
+
+    .map-grid figure {
+      margin: 0;
+    }
+
+    .map-grid img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border: 1px solid #d6ddd7;
+      border-radius: 6px;
+    }
+
+    .map-grid figcaption {
+      margin-top: 0.5rem;
+      color: #4b5b51;
+      font-size: 0.95rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      margin: 0 0 1.5rem;
+    }
+
+    th, td {
+      padding: 0.65rem 0.8rem;
+      border: 1px solid #d6ddd7;
+      vertical-align: top;
+    }
+
+    tbody tr:nth-child(even) {
+      background: #f8faf8;
+    }
+
+    .lang-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: .6rem;
+      padding: .5rem .75rem;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fafcf9;
+      color: var(--ink);
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .lang-toggle input {
+      accent-color: var(--accent);
+      width: 1rem;
+      height: 1rem;
+    }
+
+    .lang-switch {
+      margin-top: 1rem;
+      padding: 1rem 1.1rem;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fbfdfb;
+    }
+
+    .lang-block[hidden] {
+      display: none !important;
+    }
+
+    .todo-list li strong {
+      display: inline-block;
+      min-width: 10.5em;
+    }
+
+    footer {
+      margin-top: 2.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: .9rem;
+    }
+  </style>
+</head>
+<body>
+  <main>
+<header>
+  <p class="meta">Project concept · 13 October 2026</p>
+
+  <h1>
+    <span class="lang-block" data-lang="en">Manole Dome and Superadobe Wall</span>
+    <span class="lang-block" data-lang="bg" hidden>Куполът на Маноле и стена от суперадоб</span>
+  </h1>
+
+  <p class="subtitle">
+    <span class="lang-block" data-lang="en">Initial brief for architectural and engineering development</span>
+    <span class="lang-block" data-lang="bg" hidden>Начален бриф за архитектурно и инженерно развитие</span>
+  </p>
+
+  <div class="translation-toggle">
+    <label class="lang-toggle">
+      <input type="checkbox" id="langToggle" aria-label="Switch language">
+      <span id="showchoice"><strong>EN</strong> / БГ <small>(Кликнете, за да превключите на български)</small></span>
+    </label>
+  </div>
+</header>
+
+    <div class="callout">
+      <div class="lang-block" data-lang="en">
+        <strong>Design intent:</strong> Create a welcoming communal space with a removable, acoustically considered dome supported by a permanent wall. The project prioritizes passive cooling, rain protection, and integration with patios and existing site amenities.
+      </div>
+      <div class="lang-block" data-lang="bg" hidden>
+        <strong>Цел на проекта:</strong> Създаване на приветливо общо пространство с разглобяема куполна конструкция, съобразена с акустиката, поддържана от постоянна стена. Проектът поставя акцент върху пасивното охлаждане, защита от дъжд и интеграция с вътрешни дворове и съществуващи удобства на мястото.
+      </div>
+    </div>
+
+    <section class="property-reference" aria-labelledby="property-heading">
+      <h2 id="property-heading">
+        <span class="lang-block" data-lang="en">Property and site maps</span>
+        <span class="lang-block" data-lang="bg" hidden>Карта на имота и терена</span>
+      </h2>
+
+      <div class="lang-block" data-lang="en">
+        <p>Location references for the Manole site. The cadastral outline is for preliminary planning only.</p>
+      </div>
+      <div class="lang-block" data-lang="bg" hidden>
+        <p>Локационни референции за имота в Маноле. Кадастралният контур е само за предварително планиране.</p>
+      </div>
+
+      <div class="map-grid">
+        <figure>
+          <img src="manole-googlemaps.jpg" alt="Google Maps view showing the Manole property location" loading="lazy">
+          <figcaption>
+            <a href="https://www.google.com/maps/place/42%C2%B011'10.1%22N+24%C2%B055'21.8%22E/@42.18626,24.9221535,403m/data=!3m1!1e3!4m4!3m3!8m2!3d42.1861389!4d24.9227222?entry=ttu&g_ep=EgoyMDI2MTAwNy4wIKXMDSoASAFQAw%3D%3D">Location on Google Maps</a>
+          </figcaption>
+        </figure>
+
+        <figure>
+          <img src="maps_kadaster.jpg" alt="Combined map showing the Manole location and cadastral information" loading="lazy">
+          <figcaption>
+            <span class="lang-block" data-lang="en">Location and cadastral map combined</span>
+            <span class="lang-block" data-lang="bg" hidden>Комбинирана карта с местоположение и кадастър</span>
+          </figcaption>
+        </figure>
+
+        <figure>
+          <a href="map.pdf" target="_blank" rel="noopener">
+            <img src="kadaster.png" alt="Preview of the printed cadastral map; open the PDF" loading="lazy">
+          </a>
+          <figcaption>
+            <span class="lang-block" data-lang="en">Cadastral map — <a href="map.pdf" target="_blank" rel="noopener">open or download PDF</a></span>
+            <span class="lang-block" data-lang="bg" hidden>Кадастрална карта — <a href="map.pdf" target="_blank" rel="noopener">отвори или изтегли PDF</a></span>
+          </figcaption>
+        </figure>
+
+        <figure>
+          <img src="legend.png" alt="Legend" loading="lazy">
+          <figcaption>
+            <span class="lang-block" data-lang="en">Legend</span>
+            <span class="lang-block" data-lang="bg" hidden>Легенда</span>
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section>
+      <h2>
+        <span class="lang-block" data-lang="en">1. Site and project timing</span>
+        <span class="lang-block" data-lang="bg" hidden>1. Терeн и график на проекта</span>
+      </h2>
+
+      <div class="lang-block" data-lang="en">
+        <ul>
+          <li><strong>Location:</strong> Manole, Bulgaria. See above.</li>
+          <li><strong>Target schedule:</strong> Build the permanent wall in spring 2027; start the dome and related construction in June–July 2027; finish by 1 December 2027.</li>
+          <li>Confirm site boundaries, access, ground conditions, drainage, utilities, planning requirements, and permitting if relevant.</li>
+        </ul>
+      </div>
+
+      <div class="lang-block" data-lang="bg" hidden>
+        <ul>
+          <li><strong>Локация:</strong> Маноле, България. Виж по-горе.</li>
+          <li><strong>Целеви график:</strong> Изграждане на постоянната стена през пролетта на 2027 г.; старт на купола и свързаните дейности през юни–юли 2027 г.; завършване до 1 декември 2027 г.</li>
+          <li>Да се потвърдят граници на имота, достъп, почвени условия, дренаж, комуникации, изисквания за планиране и разрешителни, ако са приложими.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="dome-specifications" aria-labelledby="dome-specifications-heading">
+      <div class="map-grid">
+        <figure>
+          <img src="dome.png" alt="Preview of the dome, wall, patio and meditation space" loading="lazy">
+          <figcaption>
+            <span class="lang-block" data-lang="en">Dome, wall, patio, meditation space.</span>
+            <span class="lang-block" data-lang="bg" hidden>Купол, стена, вътрешен двор, пространство за медитация.</span>
+          </figcaption>
+        </figure>
+      </div>
+
+      <h2 id="dome-specifications-heading">
+        <span class="lang-block" data-lang="en">2. Dome specifications</span>
+        <span class="lang-block" data-lang="bg" hidden>2. Спецификации на купола</span>
+      </h2>
+
+      <div class="lang-block" data-lang="en">
+        <p>Preliminary calculator output for a 4-frequency geodesic dome with a 5.7 m outer radius and an 11.4 m diameter. Final geometry, frame details, and structural loads remain to be confirmed.</p>
+      </div>
+      <div class="lang-block" data-lang="bg" hidden>
+        <p>Предварителен калкулаторен резултат за 4-частотен геодезичен купол с външен радиус 5.7 m и диаметър 11.4 m. Крайната геометрия, детайли на конструкцията и натоварванията предстои да се потвърдят.</p>
+      </div>
+
+      <table>
+        <tbody>
+          <tr><th scope="row">Sphere outer radius (R)</th><td>5.7 m</td></tr>
+          <tr><th scope="row">Dome width / diameter</th><td>11.4 m</td></tr>
+          <tr><th scope="row">Dome radius</th><td>5.7 m</td></tr>
+          <tr><th scope="row">Equator circumference</th><td>35.81 m</td></tr>
+          <tr><th scope="row">Approx. usable floor area</th><td>about 100 m²</td></tr>
+          <tr><th scope="row">Spherical surface area</th><td>204.14 m²</td></tr>
+          <tr><th scope="row">Spherical volume</th><td>387.87 m³</td></tr>
+          <tr><th scope="row">Inner floor radius</th><td>about 5.5 m (approximate)</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>
+        <span class="lang-block" data-lang="en">3. Dome structure and covering</span>
+        <span class="lang-block" data-lang="bg" hidden>3. Конструкция и покритие на купола</span>
+      </h2>
+
+      <div class="lang-block" data-lang="en">
+        <ul>
+          <li>Nominal dome span: approximately <strong>11.4 m</strong>.</li>
+          <li>Use the outer wall face as the reference line: <strong>5.7 m radius</strong> is the outer face of the permanent wall and is flush with the outer face of the dome support above.</li>
+          <li>The inner usable floor radius may be smaller; use approximately <strong>100 m²</strong> as the working usable floor area unless the geometry is recalculated.</li>
+          <li><strong>4-frequency geodesic</strong>, based on the project’s stated Bulgarian snow-load requirement. Verify the site-specific snow and wind loads in the structural design.</li>
+          <li>Frame: cold-pressed, flattened steel pipes bolted together. The builder/architect is familiar with this construction method.</li>
+          <li>Estimated steel frame weight: less than 2,000 kg; verify the final frame weight and design loads.</li>
+          <li>Covering: tent/tarpaulin. Allow for overlap at the wall and coordinate the covering with patio openings and beams fitted into wall slots.</li>
+          <li>Design the dome so it can be dismantled and potentially relocated after a few years.</li>
+        </ul>
+      </div>
+
+      <div class="lang-block" data-lang="bg" hidden>
+        <ul>
+          <li>Номинален размах на купола: приблизително <strong>11.4 m</strong>.</li>
+          <li>Използвайте външната повърхност на стената като референтна линия: <strong>радиус 5.7 m</strong> е външната повърхност на постоянната стена и е изравнен с външната повърхност на носещия купол отгоре.</li>
+          <li>Вътрешният използваем радиус на пода може да е по-малък; използвайте приблизително <strong>100 m²</strong> като работна използваема площ, освен ако геометрията не бъде преизчислена.</li>
+          <li><strong>4-частотен геодезичен</strong>, съгласно заявеното българско изискване за снегонатоварване. Да се провери конкретното снегово и ветрово натоварване в конструктивния проект.</li>
+          <li>Рамка: студено пресовани, сплескани стоманени тръби, болтово свързани. Строителят/архитектът е запознат с този метод.</li>
+          <li>Очаквано тегло на стоманената рамка: под 2,000 kg; да се проверят крайната маса и проектните натоварвания.</li>
+          <li>Покритие: тента/брезент. Да се предвиди застъпване върху стената и да се координира с отворите към дворовете и гредите, които се вкарват в слотове в стената.</li>
+          <li>Куполът да бъде проектиран така, че да може да се разглоби и евентуално премести след няколко години.</li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="map-grid">
+      <figure>
+        <img src="superadobe.jpg" alt="Superadobe wall" loading="lazy">
+        <figcaption>
+          <a href="https://calearth.org/pages/what-is-superadobe">Superadobe wall</a>
+        </figcaption>
+      </figure>
+    </div>
+
+    <section>
+      <h2>
+        <span class="lang-block" data-lang="en">4. Permanent wall and dome support</span>
+        <span class="lang-block" data-lang="bg" hidden>4. Постоянна стена и опора на купола</span>
+      </h2>
+
+      <div class="lang-block" data-lang="en">
+        <ul>
+          <li>Permanent circular superadobe wall, approximately <strong>3.4 m high</strong>, rising vertically.</li>
+          <li>Approximate wall radius: <strong>5.7 m</strong>; this refers to the <strong>outer face</strong> of the wall. Confirm the radius reference in the drawings if needed.</li>
+          <li>Proposed materials and method: woven HDPE bags, filled with the proposed clay/cement mix, with barbed wire between courses.</li>
+          <li>Bag specifications: <strong>18 kg</strong> each; <strong>120 × 27 cm</strong>; packed in units of <strong>60 bags</strong> per full big bag.</li>
+          <li>Working quantity: <strong>1,000 bags</strong> (approximate). Use this as a coarse planning number and refine later if needed.</li>
+          <li>Barbed wire can be sourced locally if required.</li>
+          <li>A wooden platform/floor will sit on top of the wall, with the dome bearing on the platform.</li>
+          <li>Develop and verify the foundation, wall, platform, moisture protection, rainwater detailing, and complete structural load path.</li>
+          <li>Design secure steel-pipe anchoring for wind uplift and lateral forces. The connection should also allow the dome to be dismantled and relocated later.</li>
+        </ul>
+      </div>
+
+      <div class="lang-block" data-lang="bg" hidden>
+        <ul>
+          <li>Постоянна кръгла суперадоб стена с височина приблизително <strong>3.4 m</strong>, с вертикално издигане.</li>
+          <li>Приблизителен радиус на стената: <strong>5.7 m</strong>; това се отнася за <strong>външната повърхност</strong> на стената. При нужда радиусът да се потвърди в чертежите.</li>
+          <li>Предложени материали и метод: тъкани HDPE чували, пълнени с предложената глино-циментова смес, с бодлива тел между редовете.</li>
+          <li>Спецификации на чувалите: <strong>18 kg</strong> всеки; <strong>120 × 27 cm</strong>; пакетирани по <strong>60 чувала</strong> в един голям пакет.</li>
+          <li>Работно количество: <strong>1,000 чувала</strong> (приблизително). Да се използва като груба планираща стойност и при нужда да се прецизира по-късно.</li>
+          <li>Бодлива тел може да се набави локално, ако е необходимо.</li>
+          <li>Дървен под/платформа ще лежи върху стената, а куполът ще се опира върху платформата.</li>
+          <li>Да се разработят и проверят фундаментът, стената, платформата, влагозащитата, детайлите за отвеждане на дъждовна вода и пълният конструктивен път на натоварванията.</li>
+          <li>Да се проектира надеждно анкериране на стоманените тръби за вятърно повдигане и странични сили. Връзката също трябва да позволява куполът да бъде разглобен и преместен по-късно.</li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="map-grid">
+      <figure>
+        <img src="ground.png" alt="Preliminary floor plan" loading="lazy">
+        <figcaption>
+          <span class="lang-block" data-lang="en">Floorplan.. several rooms, gallery, stairs (also superadobe)</span>
+          <span class="lang-block" data-lang="bg" hidden>План.. няколко помещения, галерия, стълби (също суперадоб)</span>
+        </figcaption>
+      </figure>
+    </div>
+
+    <section>
+      <h2>
+        <span class="lang-block" data-lang="en">5. Floor plan, openings, and patios</span>
+        <span class="lang-block" data-lang="bg" hidden>5. План, отвори и вътрешни дворове</span>
+      </h2>
+
+      <div class="lang-block" data-lang="en">
+        <ul>
+          <li>Prepare an approximate floor plan of the inner walls to establish room divisions, doors, circulation, and patio locations.</li>
+          <li>The outer wall is expected to include gaps or slots for patio openings and beams to be installed later.</li>
+          <li>Coordinate openings and beams with the dome frame, tarp overlap, weatherproofing, rainwater shedding, and anchoring.</li>
+        </ul>
+      </div>
+
+      <div class="lang-block" data-lang="bg" hidden>
+        <ul>
+          <li>Да се изготви приблизителен план на вътрешните стени за определяне на помещенията, вратите, движението и местата на вътрешните дворове.</li>
+          <li>Очаква се външната стена да включва отвори или слотове за дворни отвори и греди, които ще се монтират по-късно.</li>
+          <li>Отворите и гредите да се координират с рамката на купола, застъпването на брезента, защитата от атмосферни влияния, отвеждането на дъждовната вода и анкерирането.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>
+        <span class="lang-block" data-lang="en">6. Ventilation and thermal strategy</span>
+        <span class="lang-block" data-lang="bg" hidden>6. Вентилация и топлинна стратегия</span>
+      </h2>
+
+      <div class="lang-block" data-lang="en">
+        <ul>
+          <li><strong>No windows</strong> in the dome. The dome is intended to reflect sound to the person in the center and to function as rain cover and heat insulation.</li>
+          <li>The dome floor will remain empty.</li>
+          <li>Use high-level exhaust and the dome’s stack-effect potential as part of the ventilation strategy.</li>
+          <li>Provide fresh-air inlets through the wall at approximately <strong>5–12 evenly spaced locations</strong>; determine final number, size, and placement during design.</li>
+          <li>Each inlet is intended to have a temperature sensor and a computer-controlled fan.</li>
+          <li>Explore two inlet treatments: dark, sun-warmed thermal mass to help warm incoming air, and light-coloured, shaded surfaces to help limit heat gain for cool-air inlets.</li>
+          <li>Use the wall’s thermal mass as part of a mostly passive-cooling approach.</li>
+          <li>Coordinate inlet and outlet sizing, controls, weather protection, and airflow paths. Determine the high-level outlet’s location and design.</li>
+        </ul>
+      </div>
+
+      <div class="lang-block" data-lang="bg" hidden>
+        <ul>
+          <li><strong>Без прозорци</strong> в купола. Куполът е предназначен да отразява звука към човека в центъра и да служи като защита от дъжд и топлоизолация.</li>
+          <li>Подът на купола ще остане празен.</li>
+          <li>Използвайте висок разтоварващ отвор и потенциала на коминния ефект в стратегията за вентилация.</li>
+          <li>Предвидете свеж въздух през стената в приблизително <strong>5–12 равномерно разположени точки</strong>; крайният брой, размер и разположение да се определят по време на проектирането.</li>
+          <li>Всеки входен отвор да има температурен сензор и компютърно управляван вентилатор.</li>
+          <li>Да се разгледат два варианта за входовете: тъмна, затопляна от слънцето термична маса за подгряване на постъпващия въздух и светли, засенчени повърхности за ограничаване на топлопритока при входове за хладен въздух.</li>
+          <li>Да се използва топлинната маса на стената като част от предимно пасивен подход за охлаждане.</li>
+          <li>Да се координират размерите на входовете и изхода, управлението, защитата от атмосферни влияния и въздушните потоци. Да се определи местоположението и конструкцията на високия изход.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>
+        <span class="lang-block" data-lang="en">7. Acoustics and interior finish</span>
+        <span class="lang-block" data-lang="bg" hidden>7. Акустика и вътрешно покритие</span>
+      </h2>
+
+      <div class="lang-block" data-lang="en">
+        <ul>
+          <li>Optimize the dome interior to reflect sound toward the center.</li>
+          <li>Seek the smoothest and most even interior surface practical with a tarpaulin-covered structure.</li>
+          <li>Explore inner cladding that could also provide insulation, while assessing its effect on sound reflection, ventilation, and condensation.</li>
+          <li>Consider acoustic review to assess sound focusing, echoes, and sound-level variation within the space.</li>
+        </ul>
+      </div>
+
+      <div class="lang-block" data-lang="bg" hidden>
+        <ul>
+          <li>Да се оптимизира вътрешността на купола така, че звукът да се отразява към центъра.</li>
+          <li>Да се търси възможно най-гладка и равна вътрешна повърхност, съвместима с конструкция, покрита с брезент.</li>
+          <li>Да се разгледа вътрешна облицовка, която може да осигури и изолация, като същевременно се оцени влиянието ѝ върху отражението на звука, вентилацията и конденза.</li>
+          <li>Да се предвиди акустичен преглед за оценка на фокусиране на звука, ехото и вариациите в нивото на звука в пространството.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>
+        <span class="lang-block" data-lang="en">8. Budget and scope</span>
+        <span class="lang-block" data-lang="bg" hidden>8. Бюджет и обхват</span>
+      </h2>
+
+      <div class="lang-block" data-lang="en">
+        <ul>
+          <li>Overall project budget: approximately <strong>€26,000</strong>.</li>
+          <li>Proposal allowance for the metal-pipe dome and tarp: approximately <strong>€10,000</strong>.</li>
+          <li>Remaining allowance: approximately <strong>€16,000</strong> for the wall, patios, and repairs or upgrades to Manole’s amenities.</li>
+          <li>The budget is provided by the builder.</li>
+        </ul>
+      </div>
+
+      <div class="lang-block" data-lang="bg" hidden>
+        <ul>
+          <li>Общ бюджет на проекта: приблизително <strong>€26,000</strong>.</li>
+          <li>Планиран бюджет за металната тръбна куполна конструкция и брезента: приблизително <strong>€10,000</strong>.</li>
+          <li>Оставащ бюджет: приблизително <strong>€16,000</strong> за стената, дворните пространства и ремонт или подобрения по удобствата на Маноле.</li>
+          <li>Бюджетът е предоставен от строителя.</li>
+        </ul>
+      </div>
+    </section>
+
+<section>
+  <h2>
+    <span class="lang-block" data-lang="en">9. Items to confirm / calculate during design</span>
+    <span class="lang-block" data-lang="bg" hidden>9. Елементи за потвърждение / изчисление по време на проектирането</span>
+  </h2>
+
+  <div class="lang-block" data-lang="en">
+    <ul class="todo-list">
+      <li><strong>Geometry:</strong> wall shape, thickness, foundation design, platform/floor construction, and wall-to-dome connection.</li>
+      <li><strong>Openings:</strong> wall-to-patio connections, dome-patio rain overlap, doors, beams, and internal circulation.</li>
+      <li><strong>Ventilation:</strong> intake/exhaust balance, inlet count and placement, outlet location, controls, and weather protection.</li>
+      <li><strong>Structure:</strong> Bulgaria-specific snow and wind loads, anchoring, uplift resistance, and lateral stability.</li>
+      <li><strong>Utilities:</strong> power availability and any other required services before wall construction.</li>
+      <li><strong>Construction sequence:</strong> wall, dome part 1, dome part 2, crane placement, tarpaulin, finishing.</li>
+      <li><strong>Acoustics:</strong> sound reflection, echo control, and any optional interior treatment.</li>
+    </ul>
+  </div>
+
+  <div class="lang-block" data-lang="bg" hidden>
+    <ul class="todo-list">
+      <li><strong>Геометрия:</strong> форма на стената, дебелина, проектиране на основите, конструкция на платформа/под и връзка стена–купол.</li>
+      <li><strong>Отвори:</strong> връзки стена–двор, застъпване на покриването при дъжд, врати, греди и вътрешна комуникация.</li>
+      <li><strong>Вентилация:</strong> баланс вход/изход, брой и разположение на входовете, позиция на изхода, управление и защита от атмосферни влияния.</li>
+      <li><strong>Конструкция:</strong> снегови и ветрови натоварвания за България, анкериране, устойчивост на повдигане от вятър и странична стабилност.</li>
+      <li><strong>Услуги:</strong> наличие на електрозахранване и други необходими комуникации преди изграждането на стената.</li>
+      <li><strong>Последователност на строителството:</strong> стена, купол част 1, купол част 2, поставяне с кран, брезент, довършване.</li>
+      <li><strong>Акустика:</strong> отражение на звука, контрол на ехото и евентуална вътрешна обработка.</li>
+    </ul>
+  </div>
+</section>
+
+    <footer>
+      <div class="lang-block" data-lang="en">
+        <p>This is an initial concept brief for discussion and design development. Dimensions, material choices, structural performance, ventilation, and costs require confirmation by the relevant design professionals. Landscaping and reconstruction are outside scope.</p>
+      </div>
+      <div class="lang-block" data-lang="bg" hidden>
+        <p>Това е първоначален концептуален документ за обсъждане и проектно развитие. Размерите, изборът на материали, конструктивното поведение, вентилацията и разходите трябва да бъдат потвърдени от съответните проектни специалисти. Озеленяването и реконструкцията са извън обхвата.</p>
+      </div>
+    </footer>
+  </main>
+<script>
+  const toggle = document.getElementById('langToggle');
+  const blocks = document.querySelectorAll('.lang-block');
+
+  function setLanguage(isBg, updateUrl = false) {
+    blocks.forEach(block => {
+      const showBg = block.dataset.lang === 'bg';
+      block.hidden = isBg ? !showBg : showBg;
+    });
+
+    document.documentElement.lang = isBg ? 'bg' : 'en';
+
+    if (updateUrl) {
+      const url = new URL(window.location.href);
+      url.searchParams.set('lang', isBg ? 'bg' : 'en');
+      window.history.replaceState({}, '', url);
+    }
+
+    toggle.checked = isBg;
+	
+	if(isBg)
+		document.getElementById("showchoice").innerHTML="EN / <strong>БГ</strong> <small>(Click to switch to English)</small>";
+	else
+		document.getElementById("showchoice").innerHTML="<strong>EN</strong> / БГ <small>(Кликнете, за да превключите на български)</small>";
+	
+  }
+
+  // Initialize language from the URL query parameter
+  const params = new URLSearchParams(window.location.search);
+  const initialLang = params.get('lang');
+  const isBg = initialLang === 'bg';
+
+  setLanguage(isBg);
+
+  // Update language and URL when the toggle changes
+  toggle.addEventListener('change', () => {
+    setLanguage(toggle.checked, true);
+  });
+</script>
+</body>
+</html>
